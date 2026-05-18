@@ -20,6 +20,12 @@ from pathlib import Path
 
 
 @pytest.fixture(scope='module')
+def repo_root():
+    """Get the repository root directory."""
+    return Path(__file__).parent.parent.parent
+
+
+@pytest.fixture(scope='module')
 def workflows_test_dir(repo_root):
     """Get the workflows test directory."""
     return repo_root / 'tests' / 'workflows'
@@ -84,6 +90,7 @@ class TestNewFilesFollowPattern:
         """Test that new files import same core modules as blank test"""
         # Get imports from blank test file (reference)
         with open(blank_test_file, 'r') as f:
+            blank_content = f.read()
             pass
         
         required_imports = ['pytest', 'yaml', 'os', 'Path']

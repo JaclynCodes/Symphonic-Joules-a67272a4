@@ -16,6 +16,18 @@ import sys
 from pathlib import Path
 
 
+@pytest.fixture(scope='module')
+def repo_root():
+    """Get the repository root directory."""
+    return Path(__file__).parent.parent
+
+
+@pytest.fixture(scope='module')
+def tests_dir(repo_root):
+    """Get the tests directory."""
+    return repo_root / 'tests'
+
+
 class TestTestExecution:
     """Test that the test suite can execute successfully"""
     
@@ -119,6 +131,7 @@ class TestTestIsolation:
         initial_mtimes = {f: f.stat().st_mtime for f in workflows_dir.glob('*.yml')}
         
         # Run tests (in dry-run to avoid actual execution issues)
+        result = subprocess.run(
         subprocess.run(
             [sys.executable, '-m', 'pytest', 
              str(repo_root / 'tests' / 'workflows'),

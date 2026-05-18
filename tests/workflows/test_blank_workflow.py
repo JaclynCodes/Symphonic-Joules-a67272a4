@@ -353,6 +353,8 @@ class TestWorkflowSecurityAndBestPractices:
             if pattern.lower() in content_lower:
                 pytest.fail(f"Potentially unsafe secret usage: {pattern}")
     
+    def test_named_steps_have_valid_actions(self, steps):
+        """Test that named steps have either run commands or uses actions"""
     def test_workflow_permissions_not_overly_permissive(self, workflow_data):
         """Test that workflow doesn't have overly permissive settings."""
         # If permissions are set, they should be specific
@@ -389,7 +391,8 @@ class TestWorkflowEdgeCases:
         """
         for step in steps:
             if 'name' in step:
-                assert 'run' in step, f"Named step '{step['name']}' missing 'run' command"
+                assert 'run' in step or 'uses' in step, \
+                    f"Named step '{step['name']}' missing 'run' command or 'uses' action"
     
     @pytest.mark.parametrize("step_name,error_message", [
         ('Run a one-line script', "One-line script step not found"),

@@ -12,6 +12,20 @@ Tests cover:
 
 import pytest
 import yaml
+from pathlib import Path
+
+
+@pytest.fixture(scope='module')
+def workflow_path():
+    """Get path to license check workflow file"""
+    return Path('.github/workflows/license-check.yml')
+
+
+@pytest.fixture(scope='module')
+def workflow_content(workflow_path):
+    """Load and parse license check workflow content"""
+    with open(workflow_path, 'r') as f:
+        return yaml.safe_load(f)
 
 
 @pytest.fixture(scope='module')
