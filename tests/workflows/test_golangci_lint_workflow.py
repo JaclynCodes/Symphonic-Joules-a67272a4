@@ -28,6 +28,18 @@ def workflow_content(workflow_path):
         return yaml.safe_load(f)
 
 
+@pytest.fixture(scope='module')
+def workflow_path(get_workflow_path):
+    """Get path to golangci-lint workflow file"""
+    return get_workflow_path('golangci-lint.yml')
+
+
+@pytest.fixture(scope='module')
+def workflow_content(load_workflow_file):
+    """Load and parse golangci-lint workflow content"""
+    return load_workflow_file('golangci-lint.yml')
+
+
 class TestWorkflowStructure:
     """Test golangci-lint workflow structure and metadata"""
     

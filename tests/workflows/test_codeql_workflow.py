@@ -28,6 +28,18 @@ def workflow_content(workflow_path):
         return yaml.safe_load(f)
 
 
+@pytest.fixture(scope='module')
+def workflow_path(get_workflow_path):
+    """Get path to CodeQL workflow file"""
+    return get_workflow_path('codeql.yml')
+
+
+@pytest.fixture(scope='module')
+def workflow_content(load_workflow_file):
+    """Load and parse CodeQL workflow content"""
+    return load_workflow_file('codeql.yml')
+
+
 class TestWorkflowStructure:
     """Test CodeQL workflow structure and metadata"""
     

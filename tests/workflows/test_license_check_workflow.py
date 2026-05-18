@@ -28,6 +28,18 @@ def workflow_content(workflow_path):
         return yaml.safe_load(f)
 
 
+@pytest.fixture(scope='module')
+def workflow_path(get_workflow_path):
+    """Get path to license check workflow file"""
+    return get_workflow_path('license-check.yml')
+
+
+@pytest.fixture(scope='module')
+def workflow_content(load_workflow_file):
+    """Load and parse license check workflow content"""
+    return load_workflow_file('license-check.yml')
+
+
 class TestWorkflowStructure:
     """Test license check workflow structure and metadata"""
     

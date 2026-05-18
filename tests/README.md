@@ -17,6 +17,9 @@ The test suite validates GitHub Actions workflows and project configuration file
 - `tests/workflows/test_golangci_lint_workflow.py` - Go linting workflow validation (29 tests, 10 test classes)
 - `tests/workflows/test_license_check_workflow.py` - License checking workflow validation (31 tests, 8 test classes)
 - `tests/workflows/test_new_workflow_tests.py` - Validation tests for newly added workflow test files
+- `tests/workflows/test_blank_workflow.py` - CI workflow validation (43 tests, 9 test classes)
+- `tests/workflows/test_jekyll_workflow.py` - Jekyll/GitHub Pages deployment validation (72 tests, 15 test classes)
+- `tests/workflows/test_static_workflow.py` - Static content deployment validation (75 tests, 16 test classes)
 
 ### Configuration Files
 
@@ -30,6 +33,10 @@ The test suite validates GitHub Actions workflows and project configuration file
 **Total Workflow Tests: 277 tests across 66 test classes**
 
 **Total Test Suite: 435 tests** (including validation and meta-tests)
+
+### Blank Workflow Tests (43 tests)
+
+**Total Tests: 190 across 40 test classes**
 
 ### Blank Workflow Tests (43 tests)
 
@@ -111,6 +118,46 @@ Validates job dependency chain
 
 #### TestStepNaming (2 tests)
 Tests naming conventions for clarity
+Tests file location and permissions
+
+### Jekyll Workflow Tests (72 tests)
+
+Tests for `.github/workflows/jekyll-gh-pages.yml` - Jekyll site deployment
+
+#### TestWorkflowStructure (5 tests)
+Validates YAML syntax, structure, and GitHub Pages-specific sections
+
+#### TestWorkflowMetadata (3 tests)
+Tests workflow naming conventions for Jekyll deployment
+
+#### TestTriggerConfiguration (5 tests)
+Validates push and workflow_dispatch triggers
+
+#### TestPermissionsConfiguration (7 tests)
+Tests OIDC permissions for secure GitHub Pages deployment
+
+#### TestConcurrencyConfiguration (6 tests)
+Validates concurrency control for production deployments
+
+#### TestJobsConfiguration (6 tests)
+Tests build and deploy job definitions
+
+#### TestBuildJob (14 tests)
+Comprehensive validation of Jekyll build process
+- Checkout, setup pages, Jekyll build, artifact upload
+- Parameter validation and version checking
+
+#### TestDeployJob (8 tests)
+Tests deployment job configuration and dependencies
+
+#### TestWorkflowSecurity (3 tests)
+Validates OIDC authentication and security best practices
+
+#### TestEdgeCases (4 tests)
+Tests YAML formatting and edge cases
+
+#### TestWorkflowComments (3 tests)
+Validates documentation quality
 
 ### Static Workflow Tests (75 tests)
 
@@ -129,12 +176,14 @@ Validates trigger configuration (push, workflow_dispatch)
 Tests minimal permissions following least privilege principle
 
 #### TestConcurrencyConfiguration (5 tests)
+#### TestConcurrencyConfiguration (7 tests)
 Validates production deployment concurrency control
 
 #### TestJobsConfiguration (6 tests)
 Tests single deploy job architecture
 
 #### TestDeployJob (6 tests)
+#### TestDeployJob (7 tests)
 Tests deploy job environment and configuration
 
 #### TestDeploySteps (14 tests)
@@ -144,6 +193,8 @@ Comprehensive validation of deployment steps
 
 #### TestWorkflowComments (5 tests)
 Validates documentation and clarity
+#### TestWorkflowSecurity (6 tests)
+Validates OIDC, minimal permissions, and injection prevention
 
 #### TestEdgeCases (6 tests)
 Tests YAML formatting, empty steps, and consistency
@@ -153,6 +204,8 @@ Validates OIDC, minimal permissions, and injection prevention
 
 #### TestWorkflowFilePermissions (4 tests)
 Tests file location and descriptive naming
+#### TestWorkflowComments (4 tests)
+Validates documentation and clarity
 
 #### TestWorkflowDifferencesFromJekyll (3 tests)
 Validates appropriate differences from Jekyll workflow
@@ -235,6 +288,34 @@ Install test dependencies with:
 python -m pip install -r tests/requirements.txt
 ```
 
+### Run Tests with Specific Patterns
+```bash
+# Run all security-related tests
+python3 -m pytest -k security -v
+
+# Run all permission-related tests
+python3 -m pytest -k permission -v
+
+# Run all edge case tests
+python3 -m pytest -k edge -v
+```
+
+## Test Markers
+
+The following pytest markers are available:
+
+- `@pytest.mark.workflows` - Marks tests as workflow tests
+- `@pytest.mark.integration` - Marks tests as integration tests
+- `@pytest.mark.unit` - Marks tests as unit tests
+
+## Test Dependencies
+
+Install test dependencies with:
+
+```bash
+pip install -r tests/requirements.txt
+```
+
 Required packages:
 - pytest >= 7.0.0
 - pytest-cov >= 3.0.0
@@ -280,6 +361,8 @@ These tests are designed to run in CI/CD pipelines:
   run: |
     python -m pip install -r tests/requirements.txt
     python -m pytest tests/ -v --tb=short
+    pip install -r tests/requirements.txt
+    pytest tests/ -v --tb=short
 ```
 
 ## Test Results Summary
