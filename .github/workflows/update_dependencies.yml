@@ -29,7 +29,7 @@ jobs:
       contents: write  # Needed to push changes
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Use default token for now, can be updated to use PAT if needed
           token: ${{ secrets.GITHUB_TOKEN }}
