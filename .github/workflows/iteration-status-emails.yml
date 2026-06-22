@@ -143,7 +143,7 @@ jobs:
           echo "Email content generated"
       
       - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v17
         with:
           # SMTP server configuration (using secrets)
           server_address: ${{ secrets.SMTP_SERVER }}
