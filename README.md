@@ -1,46 +1,78 @@
-<div align="center">
-  
-![Symphonic-Joules Header](assets/typing-header.svg)
+# Symphonic-Joules
 
-[![CI](https://github.com/JaclynCodes/Symphonic-Joules/workflows/CI/badge.svg)](https://github.com/JaclynCodes/Symphonic-Joules/actions/workflows/blank.yml)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Testing Rigor](https://img.shields.io/badge/testing-comprehensive-brightgreen.svg)](tests/)
-[![Scientific Phase](https://img.shields.io/badge/phase-foundation-blue.svg)](#-roadmap)
-
-</div>
+**A tool for seeing patterns in sound that would otherwise remain invisible — across language, animal communication, and human expression. The physics is the lens, coherence is the destination.**
 
 ---
 
-## 🔬 Scientific North Star
+## 🎵 The Human Question
 
-At the heart of Symphonic-Joules lies the **acoustic energy density** equation, which governs how sound carries energy through space:
+What stories are hidden in the sounds around us? From the distinctive tones of Mandarin to the alarm calls of birds, from the emotional subtext in human speech to the acoustic signatures of whale songs—sound carries meaning that transcends the visible. Yet most of these patterns remain invisible without the right tools to perceive them. Symphonic-Joules exists for researchers, field scientists, linguists, neurodivergent minds drawn to pattern synthesis, and anyone curious about what sound can reveal. We're building tools that let you listen deeper.
+
+---
+
+## 🔬 The Science That Powers It
+
+We see sound through the **acoustic energy density equation**, which describes how sound carries energy through space:
 
 <div align="center">
 
 ### **w = p² / (2ρc²) + ρv² / 2**
 
-Where:
+**Where:**
 - **w** = acoustic energy density (J/m³)
 - **p** = sound pressure (Pa)
 - **ρ** = medium density (kg/m³)
 - **c** = speed of sound (m/s)
 - **v** = particle velocity (m/s)
 
-*This fundamental relationship bridges acoustics and energy, guiding our computational approach.*
-
 </div>
 
----
-
-## 🎵 Mission
-
-A project that harmonizes the worlds of sound and energy through innovative computational approaches, providing tools and insights that bridge the gap between acoustics and physics.
+This equation reveals a fundamental truth: sound is **energy in motion**, distributed between pressure variations (potential energy) and particle movement (kinetic energy). It's how we quantify the invisible.
 
 ---
 
-## 🌊 Data Flow Architecture
+## 💡 Use Cases: Patterns That Matter
+
+### Birdsong & Animal Communication
+Analyze the acoustic signatures of bird species, detect alarm calls, and study communication patterns in wildlife. Different species have distinct spectral signatures—Symphonic-Joules helps you visualize and quantify them, revealing behavioral patterns over time and across environments.
+
+### Tonal Language Analysis
+In languages like Mandarin, Yoruba, and Thai, tone carries meaning. The same word can mean different things based on pitch contour. Use energy-based frequency analysis to distinguish between tones, study language acquisition, or analyze dialect variation across populations.
+
+### Emotional & Social Subtext in Speech
+Voice carries more than words. Stress, emotion, confidence, and social relationship dynamics are all encoded in prosody and vocal energy patterns. Researchers studying psychology, social dynamics, or clinical speech can uncover these patterns quantitatively.
+
+### Acoustic Ecology & Environmental Monitoring
+Soundscapes tell stories about ecosystems. Forest density, insect activity, water quality—all leave acoustic signatures. Use Symphonic-Joules to process field recordings, identify species presence, and detect environmental changes through sound.
+
+### Music & Cultural Analysis
+Examine energy distribution across musical genres, track how orchestral arrangements direct listener attention, or study how cultural musical traditions distribute acoustic energy differently. Bridge the gap between musicology and physics.
+
+### Clinical & Accessibility Research
+Speech-language pathologists, audiologists, and researchers studying neurodivergence can analyze vocal patterns to detect speech disorders, track therapeutic progress, or understand how autistic or ADHD individuals produce and perceive sound differently.
+
+---
+
+## 📋 Table of Contents
+
+- [The Human Question](#-the-human-question)
+- [The Science That Powers It](#-the-science-that-powers-it)
+- [Use Cases](#-use-cases-patterns-that-matter)
+- [Architecture & Data Flow](#-architecture--data-flow)
+- [Interface-First Design](#-interface-first-design)
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Testing Philosophy: Documentation-as-Code](#-testing-philosophy-documentation-as-code)
+- [Project Structure](#-project-structure)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Documentation](#-documentation)
+- [Community](#-community)
+- [License](#-license)
+
+---
+
+## 🌊 Architecture & Data Flow
 
 ```mermaid
 graph LR
@@ -53,9 +85,9 @@ graph LR
     E --> H[Energy Density Computation]
     F --> H
     G --> H
-    H --> I[Energy Output<br/>Joules/Watts]
+    H --> I[Patterns & Insights<br/>Joules/Watts]
     I --> J[Visualization]
-    J --> K[Results Dashboard]
+    J --> K[Results for Research]
     
     style A fill:#e1f5ff
     style I fill:#fff4e1
@@ -63,36 +95,7 @@ graph LR
     style H fill:#f3e5f5
 ```
 
-*This diagram illustrates the transformation pipeline from raw audio signals to quantified energy measurements.*
-
----
-
-## 📋 Table of Contents
-
-- [Scientific North Star](#-scientific-north-star)
-- [Mission](#-mission)
-- [Data Flow Architecture](#-data-flow-architecture)
-- [Overview](#-overview)
-- [Interface-First Design](#-interface-first-design)
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Usage Examples](#-usage-examples)
-- [Project Structure](#-project-structure)
-- [Testing Philosophy: Documentation-as-Code](#-testing-philosophy-documentation-as-code)
-- [Contributing](#-contributing)
-- [Roadmap](#-roadmap)
-- [Scientific Background](#-scientific-background)
-- [Documentation](#-documentation)
-- [Community](#-community)
-- [License](#-license)
-
----
-
-## 🎵 Overview
-
-Symphonic-Joules is an open-source project that explores the intersection of audio processing and energy calculations. Whether you're working with sound waves, musical compositions, or energy transformations, this project aims to provide tools and insights that bridge the gap between acoustics and physics.
-
-**Mission**: To create an extensible, scientifically-grounded framework for analyzing the energetic properties of sound and the sonic properties of energy systems.
+*This pipeline transforms raw audio into quantifiable acoustic patterns—the foundation for understanding what sound reveals.*
 
 ---
 
@@ -106,7 +109,7 @@ Symphonic-Joules follows an **interface-first** philosophy, where API design dri
 from symphonic_joules import AudioSignal, EnergyCalculator
 
 # Load and represent an audio signal
-signal = AudioSignal.from_file("symphony.wav")
+signal = AudioSignal.from_file("birdsong.wav")
 
 # Access signal properties
 print(f"Duration: {signal.duration}s")
@@ -153,24 +156,26 @@ freq_energy.plot(title="Energy Distribution by Frequency")
 - 🎯 **Interface-First Design**: API designed before implementation for clarity
 - 🔬 **Scientific Rigor**: Physics-based calculations with proper unit handling
 - 🧪 **Documentation-as-Code**: Meta-tests that validate documentation accuracy
-- 📊 **Comprehensive Testing**: 190+ tests across workflows, validation, and infrastructure
+- 📊 **Comprehensive Testing**: 800+ tests across workflows, validation, and infrastructure
 - 🔄 **CI/CD Pipeline**: Automated testing and quality checks
 - 📚 **Rich Documentation**: Detailed guides for users and contributors
 - ⚡ **Performance Focused**: Designed for efficient large-file processing
 
-### Coming Soon (Phase 2: Analysis)
+### Coming Soon (Phase 2: Communication Analysis)
 
 - 🎼 **Audio Processing**: WAV, MP3, FLAC file support with streaming
-- 📈 **Frequency Analysis**: FFT, STFT, and spectral transformations
-- ⚡ **Energy Calculations**: Acoustic energy density and power measurements
-- 🔍 **Feature Extraction**: MFCCs, spectral features, and more
+- 📈 **Frequency Analysis**: FFT, STFT for revealing spectral patterns across time
+- ⚡ **Energy Calculations**: Quantify acoustic energy across frequencies and time
+- 🔍 **Feature Extraction**: Spectral features, MFCCs, and communication-specific markers
+- 🎤 **Comparative Analysis**: Compare acoustic signatures across samples, species, languages, or individuals
+- 📊 **Pattern Detection**: Automated identification of acoustic patterns and anomalies
 
-### Future (Phase 3: Visualization)
+### Future (Phase 3: Visualization & Accessibility)
 
-- 📊 **Data Visualization**: Interactive plots and energy heatmaps
-- 💻 **CLI Tool**: `joule` command-line interface
-- 🌐 **Web Dashboard**: Real-time energy monitoring
-- 📤 **Export Tools**: JSON, CSV, and PDF report generation
+- 📊 **Data Visualization**: Interactive plots, spectrograms with energy density heatmaps
+- 🌐 **Web Dashboard**: Real-time acoustic pattern monitoring
+- 💻 **CLI Tool**: `joule` command-line interface for batch processing
+- 📤 **Export Tools**: JSON, CSV, and PDF report generation for research
 
 ---
 
@@ -186,8 +191,8 @@ freq_energy.plot(title="Energy Distribution by Frequency")
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/JaclynCodes/Symphonic-Joules.git
-cd Symphonic-Joules
+git clone https://github.com/JaclynCodes/Symphonic-Joules-a67272a4.git
+cd Symphonic-Joules-a67272a4
 
 # 2. Create and activate a virtual environment (recommended)
 python -m venv venv
@@ -217,42 +222,6 @@ python -c "import symphonic_joules; print(symphonic_joules.__version__)"
 
 For detailed installation instructions, troubleshooting, and platform-specific guidance, see **[docs/installation-setup.md](docs/installation-setup.md)**.
 
-## 💡 Usage Examples
-
-### Python API
-
-Currently, Symphonic-Joules provides a Python API for audio and energy computations. The package is designed to be imported and used programmatically.
-
-**Note**: The Python package name uses underscores (`symphonic_joules`) following Python naming conventions, while the repository and project name use hyphens (`Symphonic-Joules`).
-
-```python
-# Import the package (note: use underscores in Python)
-import symphonic_joules
-
-# Check version
-print(f"Symphonic-Joules v{symphonic_joules.__version__}")
-
-# Future usage examples will include:
-# - Loading and processing audio files
-# - Computing energy transformations
-# - Analyzing frequency domain properties
-# - Visualizing acoustic and energetic data
-```
-
-### Planned CLI Interface
-
-A command-line interface (`joule`) is planned for future releases to provide easy access to core functionality:
-
-```bash
-# Planned CLI commands (coming soon):
-# joule process-audio <input.wav> --output <output.wav>
-# joule analyze-energy <audio-file>
-# joule list-filters
-# joule convert --format mp3 <input>
-```
-
-For more examples and tutorials, see **[docs/examples/](docs/examples/)** and **[docs/getting-started.md](docs/getting-started.md)**.
-
 ---
 
 ## 🧪 Testing Philosophy: Documentation-as-Code
@@ -276,39 +245,19 @@ Our test suite includes **meta-tests** that validate documentation itself:
 class TestREADMEStructure:
     """Validates README has required sections"""
     
-    def test_has_overview_section(self, readme_content):
-        assert '## Overview' in readme_content
+    def test_has_human_question_section(self, readme_content):
+        assert '## The Human Question' in readme_content
     
-    def test_has_dependencies_section(self, readme_content):
-        assert '## Dependencies' in readme_content
-
-class TestTestCountAccuracy:
-    """Ensures documented test counts match actual implementation"""
-    
-    def test_total_test_count_is_accurate(self, readme_content, actual_test_count):
-        # Extracts test count from README and compares with actual
-        documented_count = extract_test_count(readme_content)
-        assert documented_count == actual_test_count
+    def test_has_use_cases_section(self, readme_content):
+        assert '## Use Cases' in readme_content
 ```
 
 ### Benefits
 
 - ✅ **Always Current**: Documentation is validated on every CI run
-- ✅ **Trustworthy**: Users can rely on examples and counts
+- ✅ **Trustworthy**: Users can rely on examples and information
 - ✅ **Living Documentation**: Tests enforce documentation standards
 - ✅ **Regression Prevention**: Changes that break docs fail tests
-
-### Try It Yourself
-
-```bash
-# Run documentation validation tests
-python -m pytest tests/test_readme_validation.py -v
-
-# Run all tests including documentation checks
-python -m pytest tests/ -v
-```
-
-*This testing philosophy ensures Symphonic-Joules maintains the highest standards of technical rigor and scientific accuracy.*
 
 For comprehensive test documentation, see **[tests/README.md](tests/README.md)**.
 
@@ -320,17 +269,13 @@ For comprehensive test documentation, see **[tests/README.md](tests/README.md)**
 Symphonic-Joules/
 ├── .github/              # GitHub workflows, issue templates, and CI/CD
 │   ├── workflows/        # CI/CD workflow definitions
-│   │   └── iteration-status-emails.yml  # Automated status notifications
 │   └── ISSUE_TEMPLATE/   # Issue templates
 ├── docs/                 # Comprehensive documentation
 │   ├── getting-started.md          # Getting started guide
 │   ├── installation-setup.md       # Detailed installation
 │   ├── api-reference.md            # API documentation
 │   ├── architecture.md             # System architecture
-│   ├── performance-optimization.md # Performance tips
-│   ├── test-performance-guide.md   # Testing best practices
-│   ├── iteration-email-setup.md    # Email notification setup
-│   ├── january-2026-progress.md    # Iteration progress dashboard
+│   ├── use-cases/                  # Domain-specific guides
 │   ├── faq.md                      # Frequently asked questions
 │   └── examples/                   # Code examples and tutorials
 ├── src/                  # Source code
@@ -352,74 +297,11 @@ Symphonic-Joules/
 └── setup.py              # Package setup script
 ```
 
-## 🧪 Testing
-
-Symphonic-Joules uses **pytest** for comprehensive testing. Tests ensure code quality, correctness, and prevent regressions.
-
-### Running Tests
-
-```bash
-# Run all tests
-python -m pytest tests/ -v
-
-# Run tests with coverage report
-python -m pytest tests/ --cov=symphonic_joules --cov-report=html
-
-# Run specific test file
-python -m pytest tests/test_readme_validation.py -v
-
-# Run tests matching a pattern
-python -m pytest tests/ -k "test_documentation" -v
-```
-
-### Test Organization
-
-- **Unit Tests**: Test individual functions and modules
-- **Integration Tests**: Test component interactions
-- **Workflow Tests**: Validate GitHub Actions workflows
-- **Documentation Tests**: Ensure documentation accuracy
-
-### Coverage Goals
-
-- **Target**: 80%+ code coverage for core modules
-- **Current Status**: Tests cover workflow validation, documentation accuracy, and infrastructure
-
-For more details on testing best practices, see **[docs/test-performance-guide.md](docs/test-performance-guide.md)**.
-
-## 🤝 Contributing
-
-We welcome contributions from developers, musicians, physicists, and anyone interested in the intersection of sound and energy!
-
-### How to Contribute
-
-1. **Fork the Repository** - Click the "Fork" button on GitHub
-2. **Create a Branch** - `git checkout -b feature/your-feature-name`
-3. **Make Changes** - Implement your feature or fix
-4. **Write Tests** - Add tests for your changes
-5. **Run Tests** - Ensure all tests pass with `pytest`
-6. **Submit a Pull Request** - Provide a clear description of your changes
-
-### Contribution Pathways
-
-- 🐛 **Report Bugs**: [Create an Issue](https://github.com/JaclynCodes/Symphonic-Joules/issues/new)
-- 💡 **Suggest Features**: [Feature Request](https://github.com/JaclynCodes/Symphonic-Joules/issues/new?labels=enhancement&template=feature_request.md)
-- 👶 **Good First Issues**: [Beginner-Friendly Tasks](https://github.com/JaclynCodes/Symphonic-Joules/labels/good%20first%20issue)
-- 📋 **Project Board**: [View Active Projects](https://github.com/JaclynCodes/Symphonic-Joules/projects)
-- 📖 **Improve Documentation**: Documentation PRs are always welcome!
-
-### Guidelines
-
-- Follow **PEP 8** style guide for Python code
-- Write clear commit messages
-- Add tests for new features
-- Update documentation as needed
-- Be respectful and collaborative
-
-Read the full **[Contributing Guidelines](CONTRIBUTING.md)** for detailed information.
+---
 
 ## 🎯 Roadmap
 
-Our development follows a **three-phase approach** aligned with scientific methodology:
+Our development follows a **three-phase approach**, centered on enabling human-centered acoustic pattern discovery:
 
 ### 🏗️ Phase 1: Foundation (v0.1.0 - Current)
 
@@ -436,138 +318,130 @@ Our development follows a **three-phase approach** aligned with scientific metho
 - [ ] Core `EnergyCalculator` class implementation
 - [ ] Unit validation framework for physics calculations
 
-**Deliverable**: A solid foundation ready for scientific computation
+**Deliverable**: A solid foundation ready for acoustic pattern analysis
 
 ---
 
-### 🔬 Phase 2: Analysis (v0.2.0 - Planned)
+### 🔬 Phase 2: Communication Analysis (v0.2.0 - Planned)
 
-**Goal**: Implement core acoustic and energy analysis capabilities
+**Goal**: Enable acoustic pattern analysis for communication research
 
 - [ ] **Audio I/O Module**
-  - WAV, MP3, FLAC file format support
-  - Streaming for large files
+  - WAV, MP3, FLAC file format support with streaming
   - Multi-channel audio handling
+  - Long-form recording support for field recordings
   
-- [ ] **Signal Processing**
-  - Fast Fourier Transform (FFT)
-  - Short-Time Fourier Transform (STFT)
-  - Windowing functions (Hamming, Hann, Blackman)
+- [ ] **Signal Processing for Pattern Discovery**
+  - Fast Fourier Transform (FFT) for frequency decomposition
+  - Short-Time Fourier Transform (STFT) for time-frequency patterns
+  - Windowing functions optimized for acoustic analysis
   
-- [ ] **Energy Calculations**
-  - Acoustic energy density: `w = p²/(2ρc²) + ρv²/2`
-  - RMS pressure calculations
-  - Sound intensity and power
-  - Energy conservation validation
+- [ ] **Energy Analysis & Metrics**
+  - Acoustic energy density computation across time and frequency
+  - Spectral centroid, bandwidth, and energy rolloff
+  - Energy distribution patterns (where is the "loudness" concentrated?)
+  - Comparative metrics (energy signatures across samples)
   
-- [ ] **Feature Extraction**
-  - Spectral centroid, bandwidth, rolloff
-  - Zero-crossing rate
-  - Mel-frequency cepstral coefficients (MFCCs)
+- [ ] **Communication-Specific Feature Extraction**
+  - Mel-frequency cepstral coefficients (MFCCs) for voice/speech analysis
+  - Pitch extraction and contour analysis (for tonal languages, prosody)
+  - Zero-crossing rates and temporal dynamics
+  - Spectral stability measures for distinguishing species/individuals
+  
+- [ ] **Visualization & Pattern Exploration**
+  - Spectrogram with energy density overlay
+  - Comparative spectrograms (side-by-side analysis)
+  - Energy distribution heatmaps over time
+  - Interactive exploration of acoustic space
 
-**Deliverable**: Scientifically validated energy analysis from audio signals
+**Deliverable**: Tools for discovering acoustic patterns in communication
 
 ---
 
-### 📊 Phase 3: Visualization (v0.3.0 - Planned)
+### 📊 Phase 3: Visualization & Accessibility (v0.3.0 - Planned)
 
-**Goal**: Enable intuitive exploration of acoustic energy data
+**Goal**: Make acoustic pattern analysis accessible to diverse users
 
-- [ ] **Visualization Engine**
-  - Waveform plots with energy overlay
-  - Spectrograms with energy density heatmaps
-  - 3D energy distribution surfaces
-  - Interactive plotly-based dashboards
+- [ ] **Advanced Visualization**
+  - Web-based interactive dashboards
+  - 3D acoustic energy surfaces
+  - Real-time spectrogram streaming
   
-- [ ] **CLI Tool (`joule`)**
-  - `joule analyze <audio-file>` - Quick energy analysis
-  - `joule visualize <audio-file>` - Generate visualizations
+- [ ] **CLI & Batch Tools**
+  - `joule analyze <audio>` - Quick acoustic summary
   - `joule compare <file1> <file2>` - Comparative analysis
+  - `joule batch-process <directory>` - Process field recordings
   
 - [ ] **Export & Reporting**
-  - JSON/CSV energy data export
-  - PDF report generation
   - Publication-ready figures
+  - CSV/JSON data export for further analysis
+  - PDF research reports with visualizations
+  - API for integration with other research tools
   
-- [ ] **Real-time Processing**
-  - Live audio stream analysis
-  - Real-time energy monitoring
-  - WebSocket API for dashboards
+- [ ] **Accessibility Features**
+  - CLI-first interface for scriptable access
+  - Headless mode for server deployments
+  - Integration with Jupyter notebooks
+  - Support for neurodivergent workflows (batch processing, pattern focus)
 
-**Deliverable**: Complete toolkit for acoustic energy exploration
+**Deliverable**: Accessible toolkit for acoustic pattern discovery
 
 ---
 
 ### 🚀 Phase 4: Beyond (v1.0.0+)
 
 **Future Directions**:
-- Machine learning integration for pattern recognition
-- Distributed processing for large datasets
-- Web-based visualization platform
-- Community plugin ecosystem
-- Research collaboration features
-- Mobile app for field measurements
+- Machine learning for automated pattern classification
+- Distributed processing for large soundscape datasets
+- Collaborative research platform for sharing acoustic analyses
+- Mobile app for field recording and real-time analysis
+- Integration with biodiversity databases and linguistic resources
 
 ---
 
-**Progress Tracking**: See our **[Project Board](https://github.com/JaclynCodes/Symphonic-Joules/projects)** for real-time development status.
+## 🤝 Contributing
 
-## 🔬 Scientific Background
+We welcome contributions from many backgrounds:
 
-The name **"Symphonic-Joules"** reflects our mission to harmonize:
+### Who We're Looking For
 
-- **Symphonic**: The structured, harmonic nature of music and sound
-- **Joules**: The fundamental unit of energy in physics (SI unit)
+- **Bioacousticians & Field Researchers**: Bring domain expertise in animal communication and field recording
+- **Linguists & Speech Scientists**: Help us analyze tonal languages, speech variation, and phonetics
+- **Software Developers**: Build features, optimize performance, expand capabilities
+- **Data Scientists & ML Researchers**: Develop pattern detection and classification tools
+- **Neurodivergent Minds & Unique Thinkers**: If you see patterns in sound the way others see colors, we want your perspective
+- **Accessibility Advocates**: Help ensure tools work for diverse ways of learning and working
+- **Researchers & PhD Students**: Use this in your work, contribute improvements, help validate approaches
 
-### The Foundation: Acoustic Energy Density
+### How to Contribute
 
-Our core equation, **w = p² / (2ρc²) + ρv² / 2**, represents the total energy density in an acoustic field:
+1. **Fork the Repository** - Click the "Fork" button on GitHub
+2. **Create a Branch** - `git checkout -b feature/your-feature-name`
+3. **Make Changes** - Implement your feature or fix
+4. **Write Tests** - Add tests for your changes
+5. **Run Tests** - Ensure all tests pass with `pytest`
+6. **Submit a Pull Request** - Provide a clear description of your changes
 
-- **First term (p²/2ρc²)**: Potential energy from pressure variations
-- **Second term (ρv²/2)**: Kinetic energy from particle motion
+### Contribution Pathways
 
-This equation reveals a profound truth: sound is **energy in motion**, distributed between compression/rarefaction (potential) and particle movement (kinetic).
+- 🐛 **Report Bugs**: [Create an Issue](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/issues/new)
+- 💡 **Suggest Features**: [Feature Request](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/issues/new?labels=enhancement)
+- 📚 **Improve Documentation**: Documentation PRs are always welcome!
+- 🔬 **Share Use Cases**: Tell us how you're using (or want to use) Symphonic-Joules
+- 📋 **Good First Issues**: [Beginner-Friendly Tasks](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/labels/good%20first%20issue)
 
-### Research Areas
+### Guidelines
 
-This project explores:
+- Follow **PEP 8** style guide for Python code
+- Write clear commit messages
+- Add tests for new features
+- Update documentation as needed
+- Be respectful and collaborative
+- All contributions are welcomed regardless of experience level
 
-1. **Acoustic Energy**: How sound waves carry and transform energy through different media
-   - Energy propagation in air, water, and solid materials
-   - Impedance matching and energy transfer efficiency
-   
-2. **Musical Patterns and Energy**: Relationships between harmonic structures and energy distributions
-   - Frequency-dependent energy distribution in musical instruments
-   - Spectral energy analysis of symphonic compositions
-   
-3. **Computational Acoustics**: Numerical methods for analyzing sound and energy
-   - Discrete Fourier Transform (DFT) for frequency-domain analysis
-   - Time-frequency representations (spectrograms, wavelets)
-   
-4. **Signal Processing**: Time-frequency analysis of audio signals
-   - Short-Time Fourier Transform (STFT) for non-stationary signals
-   - Window functions and their impact on energy measurements
-   
-5. **Physics-Informed Computing**: Applying physical principles to audio data analysis
-   - Conservation of energy in acoustic systems
-   - Thermodynamic limits of energy conversion
+Read the full **[Contributing Guidelines](CONTRIBUTING.md)** for detailed information.
 
-### Scientific Accuracy
-
-All physics calculations are:
-- ✅ **Validated** against known physical principles and empirical data
-- ✅ **Documented** with references to peer-reviewed scientific literature
-- ✅ **Implemented** with appropriate numerical precision (typically float64)
-- ✅ **Peer-Reviewed** through our open-source contribution process
-- ✅ **Unit-Tested** with known analytical solutions
-
-### Key References
-
-- Morse, P.M. & Ingard, K.U. (1968). *Theoretical Acoustics*. McGraw-Hill.
-- Kinsler, L.E. et al. (1999). *Fundamentals of Acoustics*. 4th Edition, Wiley.
-- Pierce, A.D. (1989). *Acoustics: An Introduction to Its Physical Principles and Applications*. Acoustical Society of America.
-
-*We stand on the shoulders of giants in acoustics and physics.*
+---
 
 ## 📚 Documentation
 
@@ -576,28 +450,31 @@ Comprehensive documentation is available in the **[docs/](docs/)** directory:
 - **[Getting Started Guide](docs/getting-started.md)** - Installation and first steps
 - **[Installation & Setup](docs/installation-setup.md)** - Detailed installation instructions
 - **[API Reference](docs/api-reference.md)** - Complete API documentation
+- **[Use Cases](docs/use-cases/)** - Domain-specific guides and examples
 - **[Architecture](docs/architecture.md)** - System design and structure
-- **[Performance Optimization](docs/performance-optimization.md)** - Best practices
-- **[Test Performance Guide](docs/test-performance-guide.md)** - Testing guidelines
 - **[FAQ](docs/faq.md)** - Frequently asked questions
 - **[Examples](docs/examples/)** - Code examples and tutorials
-- **[Iteration Email Setup](docs/iteration-email-setup.md)** - Automated status notifications
+
+---
 
 ## 👥 Community
 
 ### Get Involved
 
-- **GitHub Issues**: [Report bugs, request features](https://github.com/JaclynCodes/Symphonic-Joules/issues)
-- **Discussions**: [Ask questions, share ideas](https://github.com/JaclynCodes/Symphonic-Joules/discussions)
-- **Pull Requests**: [Contribute code and documentation](https://github.com/JaclynCodes/Symphonic-Joules/pulls)
+- **GitHub Issues**: [Report bugs, request features](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/issues)
+- **Discussions**: [Ask questions, share ideas](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/discussions)
+- **Pull Requests**: [Contribute code and documentation](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/pulls)
 
 ### Code of Conduct
 
 We are committed to providing a welcoming and inclusive environment. Please:
-- Be respectful and considerate
+- Be respectful and considerate of all perspectives
 - Welcome newcomers and help them learn
 - Focus on constructive feedback
 - Maintain a positive, collaborative atmosphere
+- Celebrate diverse ways of thinking and working
+
+---
 
 ## 📄 License
 
@@ -612,21 +489,12 @@ This project is licensed under the **MIT License** - see the **[LICENSE](LICENSE
 
 ---
 
-## 📞 Contact & Links
-
-- **Repository**: [github.com/JaclynCodes/Symphonic-Joules](https://github.com/JaclynCodes/Symphonic-Joules)
-- **Issues**: [GitHub Issues](https://github.com/JaclynCodes/Symphonic-Joules/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/JaclynCodes/Symphonic-Joules/discussions)
-- **Author**: [JaclynCodes](https://github.com/JaclynCodes)
-
----
-
 <div align="center">
 
-**Thank you for your interest in Symphonic-Joules!**
+**Symphonic-Joules exists to help you listen deeper.**
 
-*Where sound meets science, harmony meets energy.*
+*A tool for seeing patterns in sound that would otherwise remain invisible.*
 
-[![Star this repo](https://img.shields.io/github/stars/JaclynCodes/Symphonic-Joules?style=social)](https://github.com/JaclynCodes/Symphonic-Joules)
+[⭐ Star on GitHub](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4) · [📖 Read the Docs](docs/) · [💬 Join the Discussion](https://github.com/JaclynCodes/Symphonic-Joules-a67272a4/discussions)
 
 </div>

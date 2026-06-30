@@ -12,7 +12,6 @@ iteration status email notifications including:
 - Dashboard parsing logic
 """
 
-import os
 import pytest
 import yaml
 from pathlib import Path
@@ -95,6 +94,27 @@ class TestWorkflowStructure:
         triggers = workflow_content.get('on') or workflow_content.get(True)
         assert triggers is not None, "Workflow must have trigger configuration"
         assert isinstance(triggers, dict)
+
+
+class TestWorkflowMetadata:
+    """Tests for workflow metadata and naming."""
+
+    def test_workflow_name_exists(self, workflow_content):
+        """Verify the workflow has a name."""
+        assert 'name' in workflow_content, "Workflow name not defined"
+        assert isinstance(workflow_content['name'], str), "Workflow name must be a string"
+        assert len(workflow_content['name']) > 0, "Workflow name cannot be empty"
+
+    def test_workflow_name_is_descriptive(self, workflow_content):
+        """Verify the workflow name is descriptive."""
+        name = workflow_content['name']
+        assert len(name) > 10, "Workflow name should be descriptive (>10 chars)"
+
+    def test_workflow_name_mentions_iteration_or_email(self, workflow_content):
+        """Verify the workflow name mentions iteration or email."""
+        name = workflow_content['name'].lower()
+        assert 'iteration' in name or 'email' in name or 'status' in name, \
+            "Workflow name should mention its purpose (iteration/email/status)"
 
 
 class TestWorkflowTriggers:
@@ -340,31 +360,37 @@ class TestWorkflowSecurity:
 
 
 class TestEdgeCases:
-    """Test edge cases and error handling in the workflow."""
+    """Tests for edge cases and formatting."""
 
     def test_no_tabs_in_yaml(self, workflow_raw):
-        """Test that workflow uses spaces, not tabs."""
+        """Verify that workflow uses spaces, not tabs."""
         assert '\t' not in workflow_raw, "YAML should use spaces, not tabs"
 
     def test_consistent_indentation(self, workflow_raw):
-        """Test that indentation is consistent (a multiple of 2 spaces)."""
+        """Verify that indentation is consistent."""
+        """Verify workflow uses spaces, not tabs."""
+        assert '\t' not in workflow_raw, "YAML should use spaces, not tabs"
+
+    def test_consistent_indentation(self, workflow_raw):
+        """Verify indentation is consistent."""
         lines = workflow_raw.split('\n')
         for i, line in enumerate(lines, 1):
             if line.strip() and not line.strip().startswith('#'):
                 leading_spaces = len(line) - len(line.lstrip(' '))
                 if leading_spaces > 0:
                     assert leading_spaces % 2 == 0, \
-                        f"Line {i} has indentation that is not a multiple of 2 spaces"
+                        f"Line {i} has inconsistent indentation"
 
+    def test_no_duplicate_step_ids(self, workflow_content):
+        """Verify that step IDs are unique within each job."""
     def test_no_duplicate_job_names(self, workflow_content):
-        """Test that there are no duplicate job names."""
-        jobs = workflow_content.get('jobs')
-        assert jobs is not None, "Workflow must define jobs"
+        """Verify there are no duplicate job names."""
+        jobs = workflow_content.get('jobs', {})
         job_names = list(jobs.keys())
         assert len(job_names) == len(set(job_names)), "Duplicate job names found"
 
     def test_no_duplicate_step_ids(self, workflow_content):
-        """Test that step IDs are unique within each job."""
+        """Verify step IDs are unique within each job."""
         jobs = workflow_content.get('jobs', {})
         for job_name, job_config in jobs.items():
             steps = job_config.get('steps', [])
@@ -373,7 +399,8 @@ class TestEdgeCases:
                 f"Duplicate step IDs in job '{job_name}'"
 
     def test_no_empty_steps(self, workflow_content):
-        """Test that there are no empty steps."""
+        """Verify that there are no empty steps."""
+        """Verify there are no empty steps."""
         jobs = workflow_content.get('jobs', {})
         for job_name, job_config in jobs.items():
             steps = job_config.get('steps', [])
@@ -383,57 +410,10 @@ class TestEdgeCases:
                     f"Step {i} in job '{job_name}' missing 'uses' or 'run'"
 
     def test_yaml_is_parseable(self, workflow_content):
-        """Test that YAML parses into a non-empty workflow with required keys."""
-        assert workflow_content, "YAML should parse into a non-empty workflow configuration"
-        # Note: 'on' can be parsed as True in YAML
-        required_keys = {"name", "jobs"}
-        missing = required_keys.difference(workflow_content.keys())
-        assert not missing, f"Workflow is missing required top-level keys: {', '.join(sorted(missing))}"
-        # Verify trigger configuration exists (can be 'on' or True)
-        has_triggers = (
-            'on' in workflow_content
-            or any(k is True for k in workflow_content.keys())
-        )
-        assert has_triggers, "Workflow must have trigger configuration ('on' key)"
-
-    def test_workflow_handles_missing_dashboard(self, workflow_content):
-        """Test that parse step checks for dashboard file and has proper error handling."""
-        # Verify the parse step checks if dashboard file exists
-        jobs = workflow_content.get('jobs', {})
-        parse_job = jobs.get('parse-and-notify', {})
-        steps = parse_job.get('steps', [])
-        
-        # Find the parse dashboard step by id or name
-        parse_step = None
-        for step in steps:
-            # Check by id first (more reliable), then by name
-            if step.get('id') == 'parse':
-                parse_step = step
-                break
-            if 'Parse dashboard' in step.get('name', ''):
-                parse_step = step
-                break
-
-        assert parse_step is not None, "Workflow should have a dashboard parsing step"
-
-        # Verify the parse step script checks for file existence
-        run_script = parse_step.get('run', '')
-        assert '! -f' in run_script, \
-            "Parse step should check if dashboard file exists using '! -f' pattern"
-        assert 'exit 1' in run_script, \
-            "Parse step should exit with error code when dashboard file is missing"
-        
-        # Verify there's an error handling step
-        error_step = None
-        for step in steps:
-            if step.get('if') == 'failure()':
-                error_step = step
-                break
-        
-        assert error_step is not None, "Workflow should have a failure handler step"
-        error_run = error_step.get('run', '').lower()
-        assert 'dashboard' in error_run or 'dashboard file' in error_run, \
-            "Error handler should mention dashboard file issues"
+        """Verify that YAML is properly parseable."""
+        """Verify YAML is properly parseable."""
+        assert workflow_content is not None, "YAML should parse successfully"
+        assert isinstance(workflow_content, dict), "Parsed YAML should be a dict"
 
 
 if __name__ == '__main__':

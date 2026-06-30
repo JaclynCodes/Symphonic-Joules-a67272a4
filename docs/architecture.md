@@ -4,71 +4,151 @@
 > Version: 1.2.0-harmonic (Feedback-Aware)
 > Core Concept: A modular framework connecting audio vibration with energy conservation through a cybernetic feedback loop.
 
-This document outlines the high-level architecture and design principles of Symphonic-Joules.
+This document outlines the high-level architecture and design principles of Symphonic-Joules, centered around the **Harmonic Circuit** model.
 
-## 🏗️ System Architecture
+## 🏗️ System Architecture: The Harmonic Circuit
 
-Symphonic-Joules is designed as a modular framework that bridges audio processing and energy calculations through a unified computational approach.
+Symphonic-Joules is designed around the **Harmonic Circuit** architecture—a recursive, resonant framework that bridges audio processing and energy calculations through continuous feedback loops rather than linear transformations. The Harmonic Circuit transforms data flow from a unidirectional pipeline into a living, breathing system of interconnected cycles.
 
-### Core Components
+### The Harmonic Circuit: Pulse → Resonance → Nudge
+
+The Harmonic Circuit operates through three recursive phases that continuously cycle through the system:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Symphonic-Joules                        │
-├─────────────────────────────────────────────────────────────┤
-│  🎵 Audio Processing Layer                                   │
-│  ├── Signal Processing                                      │
-│  ├── Format Conversion                                      │
-│  ├── Feature Extraction                                     │
-│  └── Real-time Processing                                   │
-├─────────────────────────────────────────────────────────────┤
-│  ⚡ Energy Calculation Layer                                │
-│  ├── Thermodynamic Calculations                            │
-│  ├── Acoustic Energy Analysis                              │
-│  ├── Wave Energy Transformations                           │
-│  └── Conservation Principles                               │
-├─────────────────────────────────────────────────────────────┤
-│  🔬 Scientific Computing Core                               │
-│  ├── Mathematical Operations                               │
-│  ├── Numerical Methods                                     │
-│  ├── Statistical Analysis                                  │
-│  └── Optimization Algorithms                               │
-├─────────────────────────────────────────────────────────────┤
-│  📊 Visualization & Analysis                                │
-│  ├── Data Visualization                                    │
-│  ├── Interactive Plots                                     │
-│  ├── Report Generation                                     │
-│  └── Export Capabilities                                   │
-├─────────────────────────────────────────────────────────────┤
-│  🛠️ Utilities & Extensions                                  │
-│  ├── Plugin System                                         │
-│  ├── Configuration Management                              │
-│  ├── Logging & Debugging                                   │
-│  └── Performance Monitoring                                │
+│                 The Harmonic Circuit                       │
+│                  (Symphonic-Joules)                        │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │         🌊 PULSE Phase               │
+        │  (Initial State & Input Ingestion)   │
+        │  ─────────────────────────────────   │
+        │  • Audio data streams               │
+        │  • Energy measurement intake        │
+        │  • Signal normalization             │
+        │  • Format validation                │
+        └──────────────────┬───────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │       🎵 RESONANCE Phase             │
+        │   (Processing & Transformation)      │
+        │  ─────────────────────────────────   │
+        │  • Frequency domain analysis        │
+        │  • Energy calculations              │
+        │  • Pattern recognition              │
+        │  • Harmonic synthesis               │
+        └──────────────────┬───────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │         ⚡ NUDGE Phase                │
+        │   (Feedback & Refinement)            │
+        │  ─────────────────────────────────   │
+        │  • State adjustment                 │
+        │  • Error correction                 │
+        │  • Performance tuning               │
+        │  • Loop back to Pulse               │
+        └──────────────────┬───────────────────┘
+                           ↓
+                    ◄─────┘ (Recursive Loop)
+
+┌─────────────────────────────────────────────────────────────┐
+│              🏛️ Sanctuary Core                              │
+│         (Foundational Services & State)                     │
+│  ───────────────────────────────────────────────────────   │
+│  • Memory Management & Streaming                           │
+│  • Coherent State Filters (Security)                       │
+│  • Path Dignity Validation (Security)                      │
+│  • SIMD/GPU Optimization Infrastructure                    │
+│  • Plugin System & Extensions                              │
+│  • Visualization & Export                                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Phase Descriptions
+
+**🌊 Pulse Phase** - The inception of each cycle where raw data enters the circuit. Like a heartbeat, the Pulse phase establishes rhythm and initial conditions. Data is validated, normalized, and prepared for transformation while maintaining its essential character.
+
+**🎵 Resonance Phase** - The transformative core where computation occurs. Here, signals are analyzed in frequency domains, energy states are calculated, and patterns emerge through harmonic principles. This is where the magic happens—where sound becomes energy and energy becomes insight.
+
+**⚡ Nudge Phase** - The feedback mechanism that refines and adjusts. Each cycle learns from the previous, applying gentle corrections and performance optimizations. The Nudge ensures the circuit remains coherent, stable, and aligned with scientific principles while preparing for the next Pulse.
+
+**🏛️ Sanctuary Core** - The stable foundation underlying all phases. This is the sacred space where system state, security filters, and optimization infrastructure reside. The Sanctuary Core maintains fidelity and provides the computational substrate for the Harmonic Circuit's recursive dance.
+
+## Vision vs. Current State
+
+The **Harmonic Circuit** described above is a **target architecture and design vision**, not a complete reflection of the current implementation in `src/symphonic_joules/`.
+At present, the codebase focuses on:
+
+- Core **energy calculation** utilities
+- A minimal / placeholder **audio module** abstraction
+- Foundational scaffolding to support future extensions
+
+While the Pulse → Resonance → Nudge phases and Sanctuary Core are used here as guiding concepts, they are **not yet implemented as distinct modules or classes**. In the current state:
+
+- Pulse‑like responsibilities (input ingestion, validation, normalization) are partially covered by basic data handling around energy calculations.
+- Resonance‑like behavior is represented by the existing numerical and energy computation functions.
+- Nudge‑like feedback loops, adaptive refinement, and advanced optimization are **planned but not yet present** in the code.
+- Sanctuary Core elements (security filters, streaming, SIMD/GPU optimization, plugin systems) are **aspirational** and will be introduced incrementally.
+
+This document should therefore be read as a **roadmap and architectural intent**. As the project evolves, the implementation will more closely align with the Harmonic Circuit model, and this document will be updated to reflect concrete modules, APIs, and data flows.
+## 🔭 Vision vs. Current State
+
+The **Harmonic Circuit** architecture described in this document represents a **target architecture and design vision** for Symphonic-Joules, not a complete reflection of the current implementation in `src/symphonic_joules/`.
+
+### Current Implementation Status
+
+At present, the codebase focuses on:
+- Core **energy calculation** utilities
+- A minimal / placeholder **audio module** abstraction
+- Foundational scaffolding to support future extensions
+
+### Architectural Roadmap
+
+While the Pulse → Resonance → Nudge phases and Sanctuary Core are used here as guiding concepts, they are **not yet implemented as distinct modules or classes**. In the current state:
+
+- **Pulse-like responsibilities** (input ingestion, validation, normalization) are partially covered by basic data handling around energy calculations
+- **Resonance-like behavior** is represented by the existing numerical and energy computation functions
+- **Nudge-like feedback loops**, adaptive refinement, and advanced optimization are **planned but not yet present** in the code
+- **Sanctuary Core elements** (security filters, streaming infrastructure, SIMD/GPU optimization, plugin systems) are **aspirational** and will be introduced incrementally
+
+### Reading This Document
+
+This document should be read as a **roadmap and architectural intent**. Code examples in this document are primarily **conceptual illustrations** to demonstrate design patterns and principles, not production-ready implementations. As the project evolves, the implementation will more closely align with the Harmonic Circuit model, and this document will be updated to reflect concrete modules, APIs, and data flows.
+
+### Note on Code Examples and Dependencies
+
+Code examples in this document may reference libraries not currently in `requirements.txt`:
+- **scipy** (for FFT operations): Not included in core dependencies, but used in examples
+- **Quantum computing libraries** (Qiskit, Cirq): Future/conceptual dependencies for experimental features
+- Most code blocks are marked as "CONCEPTUAL EXAMPLE" or include placeholder functions
+
+These examples illustrate design patterns and architectural intent rather than providing copy-paste implementations.
+
 ## 🎯 Design Principles
 
-### 1. Modularity
-- **Loosely Coupled**: Components interact through well-defined interfaces
-- **Extensible**: Easy to add new processing modules and calculations
-- **Reusable**: Components can be used independently or in combination
+### 1. Recursive Resonance
+- **Cyclical Flow**: Data moves through continuous Pulse → Resonance → Nudge cycles
+- **Adaptive Feedback**: Each iteration learns from and refines previous cycles
+- **Harmonic Coherence**: System maintains stability through resonant patterns rather than rigid structure
 
 ### 2. Scientific Accuracy
 - **Validated Algorithms**: All calculations based on established scientific principles
 - **Precision**: Appropriate numerical precision for scientific computing
 - **Traceable**: Clear lineage from input to output with intermediate steps
+- **Physical Fidelity**: Energy and acoustic calculations respect conservation laws
 
-### 3. Performance
-- **Efficient Processing**: Optimized for both real-time and batch processing
-- **Scalable**: Handles varying data sizes and computational loads
-- **Resource Aware**: Monitors and manages memory and CPU usage
+### 3. Fluidity Protocol (Performance)
+- **Architecture-Aligned Processing**: Data flow optimized for SIMD and GPU capabilities
+- **Streaming First**: Memory-efficient processing through continuous streams
+- **Adaptive Resource Management**: System dynamically adjusts to available computational resources
+- **Zero-Copy Operations**: Minimize memory transfers, maximize in-place transformations
 
-### 4. Usability
-- **Intuitive API**: Clear, consistent interfaces for all functionality
-- **Documentation**: Comprehensive guides and examples
-- **Error Handling**: Graceful error handling with informative messages
+### 4. Coherent State Security
+- **Path Dignity**: Every data transformation preserves integrity and authenticity
+- **Sanctuary Core Protection**: Critical state isolated and protected from entropy breaches
+- **Coherent State Filters**: Security through harmonic validation rather than rigid barriers
+- **Trust Through Resonance**: Security emerges from system coherence, not just enforcement
 
 ## 🌀 The Harmonic Circuit (Data Flow)
 
@@ -158,15 +238,98 @@ The system remains porous through standardized interface points:
 
 *Note: This document is a high-level architecture reference. If there is any conflict between creative metaphors and the concrete technical descriptions, the technical descriptions take precedence and the system design should be updated accordingly.*
 
-## 🔮 Future Architecture Evolution
+Both personas honor the Harmonic Circuit, but in different ways:
+- Gardeners ensure **stability** and **coherence**
+- Alchemists drive **evolution** and **innovation**
 
-The architecture is designed to evolve with the project:
+Together, they create a system that is both **reliable** and **alive**.
 
-- **Microservices**: Potential future split into distributed services
-- **Cloud Integration**: Support for cloud-based processing
-- **Machine Learning**: Integration of ML models for advanced analysis
-- **Real-time Systems**: Enhanced real-time processing capabilities
+## 🔮 Future Architecture Evolution: Generative Extensions
+
+The Harmonic Circuit is designed to evolve organically, with each phase becoming more sophisticated while maintaining core principles.
+
+### Near-Term Evolution (v0.2-0.3)
+
+**Enhanced Pulse Phase**:
+- Real-time audio stream ingestion with adaptive buffering
+- Multi-format simultaneous processing
+- Network-based input sources
+
+**Deeper Resonance Phase**:
+- Advanced harmonic analysis beyond FFT
+- Cross-domain pattern recognition (audio ↔ energy)
+- Machine learning integration for pattern emergence
+
+**Smarter Nudge Phase**:
+- Reinforcement learning for adaptive optimization
+- Automatic parameter tuning based on historical cycles
+- Predictive error correction
+
+### Mid-Term Evolution (v0.4-1.0)
+
+**Distributed Harmonic Circuits**:
+- Multiple circuits running across networked nodes
+- Circuit-to-circuit resonance (synchronization)
+- Distributed Sanctuary Core with consensus
+
+**Generative Capabilities**:
+- Not just analysis, but **synthesis**—generate audio from energy patterns
+- **Reverse circuit flow**: Energy → Pattern → Sound
+- Creative applications: algorithmic composition guided by physical principles
+
+**Extended Plugin Ecosystem**:
+- Community-contributed circuit phases
+- Custom Pulse/Resonance/Nudge implementations
+- Marketplace for vetted, secure plugins
+
+### Long-Term Vision (v2.0+)
+
+**Quantum-Inspired Processing**:
+- Quantum algorithms for harmonic analysis (when hardware available)
+- Superposition of multiple resonance states
+- Entangled processing across distributed circuits
+
+**Self-Evolving Architecture**:
+- System learns optimal circuit configurations
+- Automatic architecture adaptation to workload
+- Meta-level Harmonic Circuit that evolves the base circuit
+
+**Consciousness-Inspired Design**:
+- Attention mechanisms directing circuit focus
+- Memory consolidation during low-load periods
+- Dream-like exploration of solution space during idle time
+
+### Guiding Principles for Evolution
+
+No matter how the architecture evolves, these principles remain constant:
+
+1. **Maintain the Circuit**: Pulse → Resonance → Nudge cycle is sacred
+2. **Protect the Sanctuary**: Core stability is non-negotiable
+3. **Honor the Flow**: Fluidity Protocol guides all performance work
+4. **Preserve Coherence**: Security through resonance, not walls
+5. **Balance Personas**: Gardener stability + Alchemist innovation
+6. **Scientific Grounding**: Physics and mathematics are our foundation
+7. **Symbolic Resonance**: Code should be both functional and meaningful
+
+### Migration Path from Linear to Harmonic
+
+For those familiar with the previous linear architecture, here's the conceptual mapping:
+
+```
+Linear Stack              →    Harmonic Circuit
+──────────────────────────────────────────────────
+Input Layer              →    Pulse Phase
+Processing Layers        →    Resonance Phase
+Output Layer             →    Nudge Phase (+ feedback to Pulse)
+Core Services            →    Sanctuary Core
+Error Handling           →    Coherent State Filters
+Optimization             →    Fluidity Protocol
+Security Rules           →    Path Dignity + Resonance Security
+Performance Metrics      →    Architecture Alignment Metrics
+```
+
+The key transformation: **Linear becomes Recursive**. Data doesn't flow through once and exit—it cycles, refines, and evolves through continuous feedback.
 
 ---
 
-*Architecture is the foundation upon which great software symphonies are built.*
+*"In the Harmonic Circuit, every ending is a new beginning. The architecture breathes, learns, and grows—alive with the resonance of its own recursive beauty."*
