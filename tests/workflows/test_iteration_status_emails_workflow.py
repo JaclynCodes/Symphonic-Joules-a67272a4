@@ -54,6 +54,14 @@ def workflow_content(workflow_raw):
 
 
 @pytest.fixture(scope='module')
+def jobs(workflow_content):
+    """
+    Module-scoped fixture for jobs configuration.
+    """
+    return workflow_content.get('jobs', {})
+
+
+@pytest.fixture(scope='module')
 def dashboard_path():
     """
     Module-scoped fixture for dashboard file path.
