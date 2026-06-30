@@ -29,7 +29,7 @@ updates:
     reviewers:
       - "JaclynCodes"
     assignees:
-      - "JaclynCodes"
+      - "JaclynCodes" 
     commit-message:
       prefix: "ci"
       include: "scope"
