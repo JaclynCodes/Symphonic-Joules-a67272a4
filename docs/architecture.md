@@ -1,318 +1,335 @@
-# Architecture Overview
+# 🎼 Symphonic-Joules: The Living Architecture
 
-This document outlines the high-level architecture and design principles of Symphonic-Joules.
+> Status: Living Ritual Schema
+> Version: 1.2.0-harmonic (Feedback-Aware)
+> Core Concept: A modular framework connecting audio vibration with energy conservation through a cybernetic feedback loop.
 
-## 🏗️ System Architecture
+This document outlines the high-level architecture and design principles of Symphonic-Joules, centered around the **Harmonic Circuit** model.
 
-Symphonic-Joules is designed as a modular framework that bridges audio processing and energy calculations through a unified computational approach.
+## 🏗️ System Architecture: The Harmonic Circuit
 
-### Core Components
+Symphonic-Joules is designed around the **Harmonic Circuit** architecture—a recursive, resonant framework that bridges audio processing and energy calculations through continuous feedback loops rather than linear transformations. The Harmonic Circuit transforms data flow from a unidirectional pipeline into a living, breathing system of interconnected cycles.
+
+### The Harmonic Circuit: Pulse → Resonance → Nudge
+
+The Harmonic Circuit operates through three recursive phases that continuously cycle through the system:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Symphonic-Joules                        │
-├─────────────────────────────────────────────────────────────┤
-│  🎵 Audio Processing Layer                                   │
-│  ├── Signal Processing                                      │
-│  ├── Format Conversion                                      │
-│  ├── Feature Extraction                                     │
-│  └── Real-time Processing                                   │
-├─────────────────────────────────────────────────────────────┤
-│  ⚡ Energy Calculation Layer                                │
-│  ├── Thermodynamic Calculations                            │
-│  ├── Acoustic Energy Analysis                              │
-│  ├── Wave Energy Transformations                           │
-│  └── Conservation Principles                               │
-├─────────────────────────────────────────────────────────────┤
-│  🔬 Scientific Computing Core                               │
-│  ├── Mathematical Operations                               │
-│  ├── Numerical Methods                                     │
-│  ├── Statistical Analysis                                  │
-│  └── Optimization Algorithms                               │
-├─────────────────────────────────────────────────────────────┤
-│  📊 Visualization & Analysis                                │
-│  ├── Data Visualization                                    │
-│  ├── Interactive Plots                                     │
-│  ├── Report Generation                                     │
-│  └── Export Capabilities                                   │
-├─────────────────────────────────────────────────────────────┤
-│  🛠️ Utilities & Extensions                                  │
-│  ├── Plugin System                                         │
-│  ├── Configuration Management                              │
-│  ├── Logging & Debugging                                   │
-│  └── Performance Monitoring                                │
+│                 The Harmonic Circuit                       │
+│                  (Symphonic-Joules)                        │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │         🌊 PULSE Phase               │
+        │  (Initial State & Input Ingestion)   │
+        │  ─────────────────────────────────   │
+        │  • Audio data streams               │
+        │  • Energy measurement intake        │
+        │  • Signal normalization             │
+        │  • Format validation                │
+        └──────────────────┬───────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │       🎵 RESONANCE Phase             │
+        │   (Processing & Transformation)      │
+        │  ─────────────────────────────────   │
+        │  • Frequency domain analysis        │
+        │  • Energy calculations              │
+        │  • Pattern recognition              │
+        │  • Harmonic synthesis               │
+        └──────────────────┬───────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │         ⚡ NUDGE Phase                │
+        │   (Feedback & Refinement)            │
+        │  ─────────────────────────────────   │
+        │  • State adjustment                 │
+        │  • Error correction                 │
+        │  • Performance tuning               │
+        │  • Loop back to Pulse               │
+        └──────────────────┬───────────────────┘
+                           ↓
+                    ◄─────┘ (Recursive Loop)
+
+┌─────────────────────────────────────────────────────────────┐
+│              🏛️ Sanctuary Core                              │
+│         (Foundational Services & State)                     │
+│  ───────────────────────────────────────────────────────   │
+│  • Memory Management & Streaming                           │
+│  • Coherent State Filters (Security)                       │
+│  • Path Dignity Validation (Security)                      │
+│  • SIMD/GPU Optimization Infrastructure                    │
+│  • Plugin System & Extensions                              │
+│  • Visualization & Export                                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Phase Descriptions
+
+**🌊 Pulse Phase** - The inception of each cycle where raw data enters the circuit. Like a heartbeat, the Pulse phase establishes rhythm and initial conditions. Data is validated, normalized, and prepared for transformation while maintaining its essential character.
+
+**🎵 Resonance Phase** - The transformative core where computation occurs. Here, signals are analyzed in frequency domains, energy states are calculated, and patterns emerge through harmonic principles. This is where the magic happens—where sound becomes energy and energy becomes insight.
+
+**⚡ Nudge Phase** - The feedback mechanism that refines and adjusts. Each cycle learns from the previous, applying gentle corrections and performance optimizations. The Nudge ensures the circuit remains coherent, stable, and aligned with scientific principles while preparing for the next Pulse.
+
+**🏛️ Sanctuary Core** - The stable foundation underlying all phases. This is the sacred space where system state, security filters, and optimization infrastructure reside. The Sanctuary Core maintains fidelity and provides the computational substrate for the Harmonic Circuit's recursive dance.
+
+## Vision vs. Current State
+
+The **Harmonic Circuit** described above is a **target architecture and design vision**, not a complete reflection of the current implementation in `src/symphonic_joules/`.
+At present, the codebase focuses on:
+
+- Core **energy calculation** utilities
+- A minimal / placeholder **audio module** abstraction
+- Foundational scaffolding to support future extensions
+
+While the Pulse → Resonance → Nudge phases and Sanctuary Core are used here as guiding concepts, they are **not yet implemented as distinct modules or classes**. In the current state:
+
+- Pulse‑like responsibilities (input ingestion, validation, normalization) are partially covered by basic data handling around energy calculations.
+- Resonance‑like behavior is represented by the existing numerical and energy computation functions.
+- Nudge‑like feedback loops, adaptive refinement, and advanced optimization are **planned but not yet present** in the code.
+- Sanctuary Core elements (security filters, streaming, SIMD/GPU optimization, plugin systems) are **aspirational** and will be introduced incrementally.
+
+This document should therefore be read as a **roadmap and architectural intent**. As the project evolves, the implementation will more closely align with the Harmonic Circuit model, and this document will be updated to reflect concrete modules, APIs, and data flows.
+## 🔭 Vision vs. Current State
+
+The **Harmonic Circuit** architecture described in this document represents a **target architecture and design vision** for Symphonic-Joules, not a complete reflection of the current implementation in `src/symphonic_joules/`.
+
+### Current Implementation Status
+
+At present, the codebase focuses on:
+- Core **energy calculation** utilities
+- A minimal / placeholder **audio module** abstraction
+- Foundational scaffolding to support future extensions
+
+### Architectural Roadmap
+
+While the Pulse → Resonance → Nudge phases and Sanctuary Core are used here as guiding concepts, they are **not yet implemented as distinct modules or classes**. In the current state:
+
+- **Pulse-like responsibilities** (input ingestion, validation, normalization) are partially covered by basic data handling around energy calculations
+- **Resonance-like behavior** is represented by the existing numerical and energy computation functions
+- **Nudge-like feedback loops**, adaptive refinement, and advanced optimization are **planned but not yet present** in the code
+- **Sanctuary Core elements** (security filters, streaming infrastructure, SIMD/GPU optimization, plugin systems) are **aspirational** and will be introduced incrementally
+
+### Reading This Document
+
+This document should be read as a **roadmap and architectural intent**. Code examples in this document are primarily **conceptual illustrations** to demonstrate design patterns and principles, not production-ready implementations. As the project evolves, the implementation will more closely align with the Harmonic Circuit model, and this document will be updated to reflect concrete modules, APIs, and data flows.
+
+### Note on Code Examples and Dependencies
+
+Code examples in this document may reference libraries not currently in `requirements.txt`:
+- **scipy** (for FFT operations): Not included in core dependencies, but used in examples
+- **Quantum computing libraries** (Qiskit, Cirq): Future/conceptual dependencies for experimental features
+- Most code blocks are marked as "CONCEPTUAL EXAMPLE" or include placeholder functions
+
+These examples illustrate design patterns and architectural intent rather than providing copy-paste implementations.
+
 ## 🎯 Design Principles
 
-### 1. Modularity
-- **Loosely Coupled**: Components interact through well-defined interfaces
-- **Extensible**: Easy to add new processing modules and calculations
-- **Reusable**: Components can be used independently or in combination
+### 1. Recursive Resonance
+- **Cyclical Flow**: Data moves through continuous Pulse → Resonance → Nudge cycles
+- **Adaptive Feedback**: Each iteration learns from and refines previous cycles
+- **Harmonic Coherence**: System maintains stability through resonant patterns rather than rigid structure
 
 ### 2. Scientific Accuracy
 - **Validated Algorithms**: All calculations based on established scientific principles
 - **Precision**: Appropriate numerical precision for scientific computing
 - **Traceable**: Clear lineage from input to output with intermediate steps
+- **Physical Fidelity**: Energy and acoustic calculations respect conservation laws
 
-### 3. Performance
-- **Efficient Processing**: Optimized for both real-time and batch processing
-- **Scalable**: Handles varying data sizes and computational loads
-- **Resource Aware**: Monitors and manages memory and CPU usage
+### 3. Fluidity Protocol (Performance)
+- **Architecture-Aligned Processing**: Data flow optimized for SIMD and GPU capabilities
+- **Streaming First**: Memory-efficient processing through continuous streams
+- **Adaptive Resource Management**: System dynamically adjusts to available computational resources
+- **Zero-Copy Operations**: Minimize memory transfers, maximize in-place transformations
 
-### 4. Usability
-- **Intuitive API**: Clear, consistent interfaces for all functionality
-- **Documentation**: Comprehensive guides and examples
-- **Error Handling**: Graceful error handling with informative messages
+### 4. Coherent State Security
+- **Path Dignity**: Every data transformation preserves integrity and authenticity
+- **Sanctuary Core Protection**: Critical state isolated and protected from entropy breaches
+- **Coherent State Filters**: Security through harmonic validation rather than rigid barriers
+- **Trust Through Resonance**: Security emerges from system coherence, not just enforcement
 
-## 🔄 Data Flow
+## 🌀 The Harmonic Circuit (Data Flow)
 
-The typical data flow in Symphonic-Joules follows this pattern:
+The system does not process data in a line; it circulates it through a recursive loop to maintain scientific and narrative resonance.
 
-```
-Input Data → Preprocessing → Processing → Analysis → Visualization → Output
-```
+### 1. Pulse (Input & Preprocessing)
+ * Stance: Observational.
+ * Action: Raw audio streams and GitHub telemetry are ingested into the Perpetual Soil.
+ * Vectorization: Time-series data is aligned into high-dimensional tensors—the "ritual preparation" for transmutation.
 
-### Input Sources
-- Audio files (WAV, MP3, FLAC, etc.)
-- Real-time audio streams
-- Energy measurement data
-- Configuration parameters
+### 2. Resonance (Scientific Core & Analysis)
+ * Stance: Analytical / Rigid.
+ * Action: The Architect validates structural schemas while the Scientific Core computes:
+   * Acoustic energy density.
+   * Wave transformations (Fourier/Wavelet).
+   * Thermodynamic conservation limits.
+ * The Weight: Data acquires "Joules"—gaining mass, momentum, and consequence.
 
-### Processing Pipeline
-1. **Data Validation**: Ensure input quality and format compatibility
-2. **Preprocessing**: Normalize, filter, and prepare data
-3. **Core Processing**: Apply audio and energy calculations
-4. **Analysis**: Extract insights and patterns
-5. **Post-processing**: Format results and generate outputs
+### 3. The Nudge (Feedback Loop)
+ * Logic: Energy Threshold Modulation.
+ * Action: If Energy Calculation detects "Acoustic Saturation" or "Entropy Breaches," a Tuner Signal is fired back to the Audio Processing layer.
+ * Result: Automatic adjustment of the "Wiggle" (gain, compression, or persona stance) to prevent Dissonance while preserving fidelity.
 
-### Output Formats
-- Processed audio files
-- Energy calculation results
-- Visualization plots and charts
-- Scientific reports and summaries
-- Export data in various formats
+## 🛠️ Fluidity Protocol (Performance)
 
-## 🧩 Plugin Architecture
+Fluidity is the alignment of data structures to the natural grain of the processor.
 
-Symphonic-Joules supports a plugin architecture for extensibility:
+| Pillar | Extension Point | Fluidity Logic |
+|---|---|---|
+| Acoustic Sensor | before_normalize | Memory streaming for zero-latency ingestion of high-fidelity signals. |
+| The Alchemist | tuner.switch | Parallel CPU/GPU vectorization for dense MIDI/SVG/Tensor transmutations. |
+| The Gardener | archivist.prune | Multi-level caching + "infinite mulch" to persist history without system bloat. |
 
-- **Audio Plugins**: Custom audio processing algorithms
-- **Energy Plugins**: Specialized energy calculation methods
-- **Visualization Plugins**: Custom chart types and visualizations
-- **Export Plugins**: Additional output formats and destinations
+## 🛡️ Integrity (Security)
 
-## 🔒 Security Considerations
+The framework maintains its "Sanctuary" through sovereignty and provenance.
 
-- Input validation and sanitization
-- Safe file handling and processing
-- Secure configuration management
-- Protection against malicious audio files
+ * Coherent State Filter: Admission control that only permits metadata and payloads maintaining numerical and narrative consistency.
+ * Path Dignity: File operations honor the lineage of the persona; preventing orphaned ingress that could seed Dissonant States.
+ * Sanctuary Guard: CLI/Gateway enforcement of provenance and stream sanitization to protect the scientific core.
 
-## 📈 Performance Considerations
+## 🧬 System Instructions (Persona Logic)
 
-### Memory Management
+### 🌿 Gardener Persona: "The Mulch"
 
-**Streaming for Large Files**
-- Process audio files in chunks rather than loading entirely into memory
-- Use generators and iterators for large datasets
-- Implement buffer pools to reuse memory allocations
-- Set maximum memory limits for processing operations
-
-```python
-# Efficient: Stream processing
-def process_large_audio(file_path, chunk_size=4096):
-    """Process audio file in chunks to minimize memory usage."""
-    with open(file_path, 'rb') as f:
-        while chunk := f.read(chunk_size):
-            yield process_chunk(chunk)
-
-# Inefficient: Loading entire file
-def process_large_audio_inefficient(file_path):
-    """Avoid: Loads entire file into memory."""
-    with open(file_path, 'rb') as f:
-        data = f.read()  # May cause memory issues with large files
-        return process_all(data)
+```yaml
+id: gardener_feedback_handler
+trigger: energy_saturation_event
+logic:
+  - emit: tuner_signal_with_context
+  - adjust: 
+      layer: audio_processing
+      param: wiggle_factor
+      profile: conservative_stance
+  - archive:
+      metadata: [hash, timestamp, entropy_score]
+      strategy: informed_pruning
+  - validate: coherence_pass
+  - fallback: escalate_to_operator
 ```
 
-### Computational Efficiency
+### ⚗️ Alchemist Persona: "Tension Logic"
 
-**Vectorization**
-- Use NumPy/array operations instead of Python loops
-- Leverage SIMD instructions for numerical computations
-- Batch operations when possible
-
-```python
-# Efficient: Vectorized operations
-import numpy as np
-energy = np.sum(signal ** 2) / len(signal)
-
-# Inefficient: Python loops
-energy = sum(x ** 2 for x in signal) / len(signal)
+```yaml
+id: alchemist_tension_management
+on_threshold_breach:
+  dsp_chain: [low_latency_limiter, spectral_tilt]
+  resource_optimization:
+    - reuse_cached_spectra: true
+    - avoid_fft_recomputation: true
+    - path: prefer_simd_gpu
+  entropy_cap:
+    - tighten_window_sizes: true
+    - raise_denoise_strength: true
+    - target: coherence_restoration
 ```
 
-**Avoid Redundant Calculations**
-- Cache frequently used intermediate results
-- Memoize expensive function calls
-- Precompute values when possible
+## 🔌 Plugin Topography
 
-```python
-# Efficient: Cache expensive computations
-from functools import lru_cache
+The system remains porous through standardized interface points:
 
-@lru_cache(maxsize=128)
-def compute_spectrum(audio_hash, fft_size):
-    """Cached FFT computation."""
-    return fft(audio_data, fft_size)
-
-# Inefficient: Recomputing every time
-def compute_spectrum_inefficient(audio_data, fft_size):
-    return fft(audio_data, fft_size)  # Recomputed on each call
-```
-
-### Parallel Processing
-
-**CPU Parallelization**
-- Use multiprocessing for CPU-bound tasks
-- Implement thread pools for I/O-bound operations
-- Leverage concurrent.futures for easy parallelization
-
-```python
-from concurrent.futures import ProcessPoolExecutor
-import multiprocessing
-
-def process_audio_parallel(audio_files):
-    """Process multiple audio files in parallel."""
-    num_workers = multiprocessing.cpu_count()
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        results = executor.map(process_single_file, audio_files)
-    return list(results)
-```
-
-**GPU Acceleration** (Future Enhancement)
-- Consider GPU processing for large-scale FFT operations
-- Use CUDA or OpenCL for intensive numerical computations
-- Evaluate cost/benefit for specific workloads
-
-### Caching Strategy
-
-**Multi-Level Caching**
-- **L1 (Memory)**: In-process caching of recent results
-- **L2 (Disk)**: Persistent cache for computed features
-- **L3 (Distributed)**: Shared cache for multi-instance deployments
-
-```python
-import pickle
-import hashlib
-from pathlib import Path
-
-class ResultCache:
-    """Two-level cache with memory and disk persistence."""
-    
-    def __init__(self, cache_dir='.cache'):
-        self.memory_cache = {}
-        self.cache_dir = Path(cache_dir)
-        self.cache_dir.mkdir(exist_ok=True)
-    
-    def get(self, key):
-        # Check memory cache first
-        if key in self.memory_cache:
-            return self.memory_cache[key]
-        
-        # Check disk cache
-        cache_file = self.cache_dir / f"{hashlib.md5(key.encode()).hexdigest()}.pkl"
-        if cache_file.exists():
-            with open(cache_file, 'rb') as f:
-                value = pickle.load(f)
-                self.memory_cache[key] = value  # Promote to memory
-                return value
-        
-        return None
-    
-    def set(self, key, value):
-        # Store in both memory and disk
-        self.memory_cache[key] = value
-        cache_file = self.cache_dir / f"{hashlib.md5(key.encode()).hexdigest()}.pkl"
-        with open(cache_file, 'wb') as f:
-            pickle.dump(value, f)
-```
-
-### Data Structure Selection
-
-**Choose Appropriate Data Structures**
-- Use NumPy arrays for numerical data (faster than Python lists)
-- Use deque for FIFO operations (faster than list.pop(0))
-- Use sets for membership testing (O(1) vs O(n) for lists)
-
-```python
-from collections import deque
-import numpy as np
-
-# Efficient: NumPy array for numerical operations
-signal = np.array(audio_data, dtype=np.float32)
-
-# Efficient: Deque for sliding window operations
-buffer = deque(maxlen=1024)
-for sample in stream:
-    buffer.append(sample)
-    process_window(buffer)
-
-# Inefficient: List with pop(0)
-buffer = []
-for sample in stream:
-    buffer.append(sample)
-    if len(buffer) > 1024:
-        buffer.pop(0)  # O(n) operation
-```
-
-### Algorithm Complexity
-
-**Choose Efficient Algorithms**
-- Prefer O(n log n) over O(n²) when possible
-- Use appropriate search and sort algorithms
-- Consider trade-offs between time and space complexity
-
-```python
-# Efficient: FFT for frequency analysis - O(n log n)
-from scipy.fft import fft
-spectrum = fft(signal)
-
-# Inefficient: Naive DFT implementation - O(n²)
-def naive_dft(signal):
-    N = len(signal)
-    return [sum(signal[n] * np.exp(-2j * np.pi * k * n / N) 
-                for n in range(N)) for k in range(N)]
-```
-
-### Resource Cleanup
-
-**Proper Resource Management**
-- Use context managers for file handles
-- Close resources explicitly when not using context managers
-- Clean up temporary files and caches
-
-```python
-# Efficient: Context manager ensures cleanup
-with AudioFile(path) as audio:
-    process(audio.read())
-# File automatically closed
-
-# Inefficient: Manual management
-audio = AudioFile(path)
-process(audio.read())
-# File may not be closed if exception occurs
-```
-
-## 🔮 Future Architecture Evolution
-
-The architecture is designed to evolve with the project:
-
-- **Microservices**: Potential future split into distributed services
-- **Cloud Integration**: Support for cloud-based processing
-- **Machine Learning**: Integration of ML models for advanced analysis
-- **Real-time Systems**: Enhanced real-time processing capabilities
+ * Audio Plugins: Signal-level hooks for feature extraction.
+ * Energy Plugins: Novel thermodynamic or wave-translation models.
+ * Visual Plugins: Radial/Cartographic rendering engines.
 
 ---
 
-*Architecture is the foundation upon which great software symphonies are built.*
+*Note: This document is a high-level architecture reference. If there is any conflict between creative metaphors and the concrete technical descriptions, the technical descriptions take precedence and the system design should be updated accordingly.*
+
+Both personas honor the Harmonic Circuit, but in different ways:
+- Gardeners ensure **stability** and **coherence**
+- Alchemists drive **evolution** and **innovation**
+
+Together, they create a system that is both **reliable** and **alive**.
+
+## 🔮 Future Architecture Evolution: Generative Extensions
+
+The Harmonic Circuit is designed to evolve organically, with each phase becoming more sophisticated while maintaining core principles.
+
+### Near-Term Evolution (v0.2-0.3)
+
+**Enhanced Pulse Phase**:
+- Real-time audio stream ingestion with adaptive buffering
+- Multi-format simultaneous processing
+- Network-based input sources
+
+**Deeper Resonance Phase**:
+- Advanced harmonic analysis beyond FFT
+- Cross-domain pattern recognition (audio ↔ energy)
+- Machine learning integration for pattern emergence
+
+**Smarter Nudge Phase**:
+- Reinforcement learning for adaptive optimization
+- Automatic parameter tuning based on historical cycles
+- Predictive error correction
+
+### Mid-Term Evolution (v0.4-1.0)
+
+**Distributed Harmonic Circuits**:
+- Multiple circuits running across networked nodes
+- Circuit-to-circuit resonance (synchronization)
+- Distributed Sanctuary Core with consensus
+
+**Generative Capabilities**:
+- Not just analysis, but **synthesis**—generate audio from energy patterns
+- **Reverse circuit flow**: Energy → Pattern → Sound
+- Creative applications: algorithmic composition guided by physical principles
+
+**Extended Plugin Ecosystem**:
+- Community-contributed circuit phases
+- Custom Pulse/Resonance/Nudge implementations
+- Marketplace for vetted, secure plugins
+
+### Long-Term Vision (v2.0+)
+
+**Quantum-Inspired Processing**:
+- Quantum algorithms for harmonic analysis (when hardware available)
+- Superposition of multiple resonance states
+- Entangled processing across distributed circuits
+
+**Self-Evolving Architecture**:
+- System learns optimal circuit configurations
+- Automatic architecture adaptation to workload
+- Meta-level Harmonic Circuit that evolves the base circuit
+
+**Consciousness-Inspired Design**:
+- Attention mechanisms directing circuit focus
+- Memory consolidation during low-load periods
+- Dream-like exploration of solution space during idle time
+
+### Guiding Principles for Evolution
+
+No matter how the architecture evolves, these principles remain constant:
+
+1. **Maintain the Circuit**: Pulse → Resonance → Nudge cycle is sacred
+2. **Protect the Sanctuary**: Core stability is non-negotiable
+3. **Honor the Flow**: Fluidity Protocol guides all performance work
+4. **Preserve Coherence**: Security through resonance, not walls
+5. **Balance Personas**: Gardener stability + Alchemist innovation
+6. **Scientific Grounding**: Physics and mathematics are our foundation
+7. **Symbolic Resonance**: Code should be both functional and meaningful
+
+### Migration Path from Linear to Harmonic
+
+For those familiar with the previous linear architecture, here's the conceptual mapping:
+
+```
+Linear Stack              →    Harmonic Circuit
+──────────────────────────────────────────────────
+Input Layer              →    Pulse Phase
+Processing Layers        →    Resonance Phase
+Output Layer             →    Nudge Phase (+ feedback to Pulse)
+Core Services            →    Sanctuary Core
+Error Handling           →    Coherent State Filters
+Optimization             →    Fluidity Protocol
+Security Rules           →    Path Dignity + Resonance Security
+Performance Metrics      →    Architecture Alignment Metrics
+```
+
+The key transformation: **Linear becomes Recursive**. Data doesn't flow through once and exit—it cycles, refines, and evolves through continuous feedback.
+
+---
+
+*"In the Harmonic Circuit, every ending is a new beginning. The architecture breathes, learns, and grows—alive with the resonance of its own recursive beauty."*
