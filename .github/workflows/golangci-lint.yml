@@ -15,7 +15,8 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
       
       - name: Check for Go files
         id: check-go
@@ -28,13 +29,14 @@ jobs:
 
       - name: Set up Go (if Go files found)
         if: steps.check-go.outputs.go_files_found == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
+        uses: actions/setup-go@v6
         with:
           go-version: '1.21'
 
       - name: golangci-lint (if Go files found)
         if: steps.check-go.outputs.go_files_found == 'true'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
 
