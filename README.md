@@ -1,6 +1,6 @@
 # Symphonic-Joules
 
-**A tool for seeing patterns in sound that would otherwise remain invisible — across language, animal communication, and human expression. The physics is the lens, not the destination.**
+**A tool for seeing patterns in sound that would otherwise remain invisible — across language, animal communication, and human expression. The physics is the lens, coherence is the destination.**
 
 ---
 
