@@ -32,8 +32,10 @@ from pathlib import Path
 @pytest.fixture(scope='module')
 def workflow_path():
     """
-    Module-scoped fixture for workflow file path.
-    Computed once and shared across all tests in this module.
+    Provide the absolute path to the repository's Jekyll GitHub Actions workflow file.
+    
+    Returns:
+        Path: Path pointing to `.github/workflows/jekyll-gh-pages.yml` within the repository root.
     """
     repo_root = Path(__file__).parent.parent.parent
     return repo_root / '.github' / 'workflows' / 'jekyll-gh-pages.yml'
@@ -48,8 +50,13 @@ def workflow_path(get_workflow_path):
 @pytest.fixture(scope='module')
 def workflow_raw(workflow_path):
     """
-    Module-scoped fixture for raw workflow content.
-    File is read once and cached for all tests.
+    Read and return the raw text content of the workflow file.
+    
+    Parameters:
+        workflow_path (str): Path to the workflow YAML file.
+    
+    Returns:
+        str: The file's raw text content.
     """
     """Module-scoped fixture for raw workflow content."""
     with open(workflow_path, 'r') as f:
@@ -59,8 +66,15 @@ def workflow_raw(workflow_path):
 @pytest.fixture(scope='module')
 def workflow_content(workflow_raw):
     """
-    Module-scoped fixture for parsed workflow content.
-    YAML parsing is done once and cached for all tests.
+    Parse the raw workflow YAML and produce its parsed content.
+    
+    Module-scoped pytest fixture that parses `workflow_raw` into Python data structures and caches the result for the module so all tests share the same parsed workflow.
+    
+    Parameters:
+        workflow_raw (str): Raw YAML text of the workflow file.
+    
+    Returns:
+        The parsed YAML content (typically a dict) representing the workflow structure.
     """
     """Module-scoped fixture for parsed workflow content."""
     return yaml.safe_load(workflow_raw)
@@ -69,8 +83,13 @@ def workflow_content(workflow_raw):
 @pytest.fixture(scope='module')
 def jobs(workflow_content):
     """
-    Module-scoped fixture for jobs configuration.
-    Extracted once and shared across all tests.
+    Retrieve the top-level 'jobs' mapping from parsed GitHub Actions workflow content.
+    
+    Parameters:
+        workflow_content (dict): Parsed YAML mapping of the workflow file.
+    
+    Returns:
+        dict: Mapping of job names to their configurations; an empty dict if no 'jobs' key is present.
     """
     return workflow_content.get('jobs', {})
 
@@ -78,7 +97,13 @@ def jobs(workflow_content):
 @pytest.fixture(scope='module')
 def permissions(workflow_content):
     """
-    Module-scoped fixture for permissions configuration.
+    Retrieve the top-level 'permissions' mapping from the parsed workflow YAML.
+    
+    Parameters:
+        workflow_content (dict): Parsed YAML content of the workflow file.
+    
+    Returns:
+        dict: The 'permissions' mapping from the workflow content, or an empty dict if not present.
     """
     return workflow_content.get('permissions', {})
 
@@ -86,7 +111,13 @@ def permissions(workflow_content):
 @pytest.fixture(scope='module')
 def concurrency(workflow_content):
     """
-    Module-scoped fixture for concurrency configuration.
+    Return the workflow's concurrency configuration mapping.
+    
+    Parameters:
+        workflow_content (dict): Parsed YAML content of the workflow file.
+    
+    Returns:
+        dict: The 'concurrency' section from the workflow, or an empty dict if it is not present.
     """
     return workflow_content.get('concurrency', {})
 
@@ -189,7 +220,15 @@ class TestTriggerConfiguration:
 
     @pytest.fixture
     def triggers(self, workflow_content):
-        """Get trigger configuration from workflow content"""
+        """
+        Retrieve the workflow's trigger configuration from parsed YAML content.
+        
+        Parameters:
+            workflow_content (dict): The workflow YAML parsed into a mapping.
+        
+        Returns:
+            dict or None: The trigger configuration (value under the `on` key or the YAML boolean True key), or `None` if no trigger configuration is present.
+        """
         return workflow_content.get(True) or workflow_content.get('on')
 
     def test_has_trigger_configuration(self, triggers):
@@ -265,7 +304,12 @@ class TestPermissionsConfiguration:
     """Test permissions configuration for GitHub Pages deployment"""
 
     def test_permissions_section_exists(self, permissions):
-        """Test that permissions section is properly configured"""
+        """
+        Verify the workflow's `permissions` section exists and is a non-empty mapping.
+        
+        Parameters:
+            permissions (dict | None): The parsed `permissions` section from the workflow YAML; may be None if missing.
+        """
         assert permissions is not None, "Permissions configuration is missing"
         assert isinstance(permissions, dict), "Permissions must be a dictionary"
         assert len(permissions) > 0, "Permissions section is empty"
@@ -458,11 +502,24 @@ class TestBuildJob:
     
     @pytest.fixture
     def build_job(self, jobs):
-        """Get build job configuration"""
+        """
+        Return the configuration mapping for the workflow's `build` job.
+        
+        Parameters:
+            jobs (dict): Mapping of job names to their configurations as parsed from the workflow.
+        
+        Returns:
+            dict: The `build` job configuration dictionary, or an empty dict if no `build` job is present.
+        """
         return jobs.get('build', {})
 
     def test_build_job_has_steps(self, build_job):
-        """Test that build job has steps defined"""
+        """
+        Verify the 'build' job defines a non-empty list under the 'steps' key.
+        
+        Raises:
+            AssertionError: If the 'steps' key is missing, is not a list, or the list is empty.
+        """
         assert 'steps' in build_job, "Build job missing 'steps'"
         steps = build_job['steps']
         assert isinstance(steps, list), "Build job steps must be a list"
@@ -477,7 +534,15 @@ class TestBuildJob:
     
     @pytest.fixture
     def build_steps(self, build_job):
-        """Get build job steps"""
+        """
+        Retrieve the steps list from a build job configuration.
+        
+        Parameters:
+            build_job (dict): Mapping representing the 'build' job from the workflow YAML.
+        
+        Returns:
+            list: The list of step mappings defined for the build job, or an empty list if none are present.
+        """
         return build_job.get('steps', [])
 
     def test_first_step_is_checkout(self, build_steps):
@@ -488,11 +553,15 @@ class TestBuildJob:
             "First step should be checkout action"
 
     def test_checkout_uses_v4(self, build_steps):
-        """Test that checkout action uses version 4"""
+        """
+        Verify the build job's checkout step references the v5 `actions/checkout` action.
+        
+        This test locates a step in the build job that uses a checkout action and asserts its `uses` string includes `@v5`.
+        """
         checkout_steps = [s for s in build_steps if 'uses' in s and 'checkout' in s['uses']]
         assert len(checkout_steps) > 0, "No checkout step found"
-        assert '@v4' in checkout_steps[0]['uses'], \
-            "Checkout action should use version 4"
+        assert '@v5' in checkout_steps[0]['uses'], \
+            "Checkout action should use version 5"
 
     def test_has_setup_pages_step(self, build_steps):
         """Test that build job includes setup pages action"""
@@ -522,7 +591,12 @@ class TestBuildJob:
             "Jekyll build should use version 1"
 
     def test_jekyll_build_has_with_parameters(self, build_steps):
-        """Test that Jekyll build step has source and destination parameters"""
+        """
+        Verify the Jekyll build step includes `with` parameters for `source` and `destination`.
+        
+        Parameters:
+            build_steps (list): Sequence of step dictionaries from the `build` job; the test selects the step whose `uses` value contains `jekyll-build-pages` and asserts that its `with` mapping contains `source` and `destination`.
+        """
         jekyll_steps = [s for s in build_steps
                         if 'uses' in s and 'jekyll-build-pages' in s['uses']]
         assert len(jekyll_steps) > 0, "Jekyll build step not found"
@@ -673,7 +747,15 @@ class TestDeployJob:
     
     @pytest.fixture
     def deploy_job(self, jobs):
-        """Get deploy job configuration"""
+        """
+        Retrieve the 'deploy' job configuration from the jobs mapping.
+        
+        Parameters:
+            jobs (dict): Mapping of job names to job configuration dictionaries extracted from the workflow.
+        
+        Returns:
+            dict: The 'deploy' job configuration if present, otherwise an empty dict.
+        """
         return jobs.get('deploy', {})
 
     def test_deploy_job_has_environment(self, deploy_job):
@@ -718,7 +800,15 @@ class TestDeployJob:
 
     @pytest.fixture
     def deploy_steps(self, deploy_job):
-        """Get deploy job steps"""
+        """
+        Return the steps list from a deploy job configuration.
+        
+        Parameters:
+            deploy_job (dict): Mapping representing the deploy job configuration from the parsed workflow YAML.
+        
+        Returns:
+            list: The job's 'steps' list, or an empty list if the key is absent.
+        """
         return deploy_job.get('steps', [])
 
     def test_deploy_has_one_step(self, deploy_steps):
@@ -763,7 +853,9 @@ class TestWorkflowComments:
             "Workflow should identify itself as a sample workflow"
 
     def test_mentions_jekyll_in_comments(self, workflow_raw):
-        """Test that comments mention Jekyll"""
+        """
+        Ensure the workflow source contains a mention of Jekyll in its comments.
+        """
         assert 'Jekyll' in workflow_raw or 'jekyll' in workflow_raw, \
             "Comments should mention Jekyll"
 
@@ -944,7 +1036,11 @@ class TestWorkflowSecurity:
                             f"Potential hardcoded secret pattern '{pattern}' found"
 
     def test_uses_oidc_authentication(self, permissions):
-        """Test that workflow uses OIDC for authentication"""
+        """
+        Verify the workflow grants the `id-token` permission at `write` level for OIDC authentication.
+        
+        Asserts that the permissions mapping contains the `id-token` key and that its value is 'write'.
+        """
         assert 'id-token' in permissions, \
             "Workflow should use OIDC (id-token permission) for secure authentication"
         assert permissions['id-token'] == 'write', \
@@ -1021,7 +1117,9 @@ class TestStepNaming:
             "Should have upload/artifact step"
 
     def test_deploy_step_has_descriptive_name(self, jobs):
-        """Test that deploy step has descriptive name"""
+        """
+        Ensure the deploy job's first step name includes the word 'deploy' (case-insensitive).
+        """
         deploy_steps = jobs['deploy']['steps']
         deploy_step = deploy_steps[0]
 

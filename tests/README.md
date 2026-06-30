@@ -34,7 +34,7 @@ The test suite validates GitHub Actions workflows and project configuration file
 
 **Total Test Suite: 435 tests** (including validation and meta-tests)
 
-### Blank Workflow Tests (43 tests)
+### Blank Workflow Tests (37 tests)
 
 **Total Tests: 190 across 40 test classes**
 
@@ -71,7 +71,7 @@ Validates security best practices
 #### TestWorkflowFilePermissions (3 tests)
 Tests file location and permissions
 
-### Jekyll Workflow Tests (72 tests)
+### Jekyll Workflow Tests (71 tests)
 
 Tests for `.github/workflows/jekyll-gh-pages.yml` - Jekyll site deployment
 
@@ -159,7 +159,7 @@ Tests YAML formatting and edge cases
 #### TestWorkflowComments (3 tests)
 Validates documentation quality
 
-### Static Workflow Tests (75 tests)
+### Static Workflow Tests (79 tests)
 
 Tests for `.github/workflows/static.yml` - Static content deployment
 
