@@ -26,7 +26,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       # Set up Python for comprehensive testing
       - name: Set up Python
@@ -100,7 +100,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
       
       - name: Lint Markdown files
         uses: DavidAnson/markdownlint-cli2-action@v24
