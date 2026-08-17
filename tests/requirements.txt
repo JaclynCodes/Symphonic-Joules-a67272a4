@@ -10,7 +10,7 @@ PyYAML>=5.1
 
 # Dependencies needed for testing audio and energy modules
 numpy>=2.5.1
-librosa>=0.11.0
+librosa>=1.0.0
 soundfile>=0.14.0
 numpy>=2.4.4
 librosa>=0.9.0
