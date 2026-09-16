@@ -4,7 +4,7 @@
 
 ### What is Symphonic-Joules?
 
-Symphonic-Joules is an open-source Python project for exploring the relationship between sound and energy. It provides tools for audio loading, signal framing, basic energy proxies, and educational/experimental analysis of how sound changes over time and across frequency bands.
+Symphonic-Joules is an open-source Python project for exploring the relationship between sound and energy. It provides tools for audio loading, signal framing, basic energy proxies, and educational or experimental analysis of how sound changes over time and across frequency bands.
 
 ### Who is this project for?
 
@@ -16,7 +16,7 @@ Symphonic-Joules is an open-source Python project for exploring the relationship
 
 ### What makes Symphonic-Joules unique?
 
-The project focuses on the intersection of audio processing and energy calculations, with a strong emphasis on transparent scientific scope and careful handling of calibrated vs. uncalibrated data.
+The project focuses on the intersection of audio processing and energy calculations, with a strong emphasis on transparent scientific scope and careful handling of calibrated versus uncalibrated data.
 
 ## Getting Started
 
@@ -68,7 +68,7 @@ Yes, with caution. We recommend:
 
 ### What audio formats are supported?
 
-The current package is built around WAV workflows and uses Librosa/SoundFile for audio I/O. More formats may be added later, but the current implemented scope is primarily WAV-based.
+The current package is built around WAV workflows and uses Librosa and SoundFile for audio I/O. More formats may be added later, but the current implemented scope is primarily WAV-based.
 
 ### Can I process real-time audio?
 

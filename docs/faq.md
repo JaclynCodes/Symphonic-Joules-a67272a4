@@ -1,58 +1,100 @@
-# Calibration Guide
+# 🎵 Symphonic-Joules
 
-## Why calibration matters
+> Where Sound Meets Science.
 
-A WAV file stores digital sample amplitudes, not direct physical sound pressure. For a physically meaningful result, the system must know how those samples relate to pressure in Pascals.
+## Current Status
 
-Without calibration, the package can still compute useful relative signal-energy proxies, but it cannot truthfully report physical acoustic energy density in J/m³.
+Symphonic-Joules is an early-stage Python project with a working foundation for audio loading, waveform processing, and relative signal-energy analysis. The package is not yet a complete calibrated acoustic measurement system, and results from the audio-energy functions should be treated as signal proxies unless sound-pressure calibration has been applied.
 
-## Required information
+### Implemented today
+- ✅ Python package structure under `src/symphonic_joules/`
+- ✅ Audio file loading and saving with NumPy, Librosa, and SoundFile
+- ✅ Peak normalization, mono conversion, and signal framing
+- ✅ Basic physics helpers for kinetic and potential energy
+- ✅ Relative audio-energy proxies for frame-wise and spectral analysis
+- ✅ Pytest-based validation and Ruff linting setup
 
-To convert digital audio into physical pressure you need:
-- microphone sensitivity (for example, mV/Pa or V/Pa)
-- gain or recording-chain amplification information
-- ADC or interface full-scale range and conversion settings
-- explicit assumptions about the sound field, such as plane-wave conditions
+### Planned / future work
+- 🔄 Microphone calibration support and conversion from digital samples to Pascals
+- 🔄 Real-time audio processing
+- 🔄 Multi-format support beyond WAV
+- 🔄 Plugin architecture and extensibility work
+- 🔄 More rigorous scientific validation and benchmark datasets
+- 🔄 Visualization, dashboards, and notebook tooling
 
-## Common path to calibrated pressure
+This project currently provides a solid scientific and engineering foundation for audio analysis, but not yet a fully calibrated acoustics platform.
 
-1. Load the WAV file into a NumPy array.
-2. Convert digital amplitude to voltage using the ADC reference and full-scale range.
-3. Convert voltage to pressure using the microphone sensitivity.
-4. Apply the appropriate acoustic model if needed.
+---
 
-Example:
+## The Science That Powers It
 
-```python
-import numpy as np
-from scipy.io import wavfile
+We analyze sound through the acoustic energy density equation, which governs how sound carries energy through space:
 
-sample_rate, data = wavfile.read("recording.wav")
-# Assume 16-bit PCM normalized to [-1, 1]
-normalized = data.astype(np.float64) / 32768.0
+$$ w = \frac{p^2}{2\rho c^2} + \frac{\rho v^2}{2} $$
 
-# Example values for illustration only
-adc_full_scale_vpp = 2.0
-mic_sensitivity_v_per_pa = 0.05
+Where:
+* $w$ = acoustic energy density ($\text{J}/\text{m}^3$)
+* $p$ = sound pressure ($\text{Pa}$)
+* $\rho$ = medium density ($\text{kg}/\text{m}^3$)
+* $c$ = speed of sound ($\text{m}/\text{s}$)
+* $v$ = particle velocity ($\text{m}/\text{s}$)
 
-volts = normalized * (adc_full_scale_vpp / 2.0)
-pressure_pa = volts / mic_sensitivity_v_per_pa
+This equation is valid for calibrated acoustic quantities. Raw WAV sample amplitudes are digital representations, not direct physical pressure values. For uncalibrated audio, the package reports relative signal-energy proxies rather than claiming physical energy density in J/m³.
+
+---
+
+## 🚀 Quick Start
+
+**Prerequisites:** Python 3.8+ (3.11 recommended for macOS)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/JaclynCodes/Symphonic-Joules-a67272a4.git
+cd Symphonic-Joules-a67272a4
+
+# 2. Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install the package
+pip install -e .
 ```
 
-This is a calibration workflow, not a one-click conversion. The exact values depend on hardware and recording chain configuration.
+### Quick API Preview
 
-## Scientific caveat
+```python
+from symphonic_joules import load_audio, frame_mean_square
 
-For a plane progressive wave, pressure and particle velocity are related by:
+# Load an audio file
+y, sr, metadata = load_audio("birdsong.wav", sr=22050)
 
-$$ v = \frac{p}{\rho c} $$
+# Compute a relative frame-level energy proxy
+energy = frame_mean_square(y, frame_length=2048, hop_length=512)
+print(f"Computed {len(energy)} frames")
+print(f"Sample rate: {sr} Hz")
+print(f"Duration: {metadata['duration_seconds']:.2f}s")
+```
 
-and the total acoustic energy density becomes:
+---
 
-$$ w = \frac{p^2}{\rho c^2} $$
+## 💡 Patterns That Matter (Use Cases)
 
-This holds only under the stated acoustic assumptions and with calibrated pressure data.
+* Birdsong and animal communication analysis
+* Tonal language analysis
+* Emotional and social subtext via vocal prosody
+* Acoustic ecology and environmental sound monitoring
+* Music and cultural analysis
+* Clinical, accessibility, and speech research workflows
 
-## Current package stance
+---
 
-The package currently reports relative or normalized energy metrics for uncalibrated digital audio. Those values are useful as signal proxies but should not be described as physical acoustic energy density without calibration.
+## 🧭 Documentation
+
+* [docs/faq.md](docs/faq.md)
+* [docs/ROADMAP.md](docs/ROADMAP.md)
+* [docs/calibration-guide.md](docs/calibration-guide.md)
+* [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+Current Phase: Foundation (v0.1.0) | Licensed under [MIT](LICENSE)

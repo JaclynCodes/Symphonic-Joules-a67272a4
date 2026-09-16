@@ -1,226 +1,58 @@
-"""
-Energy-related numerical utilities for Symphonic-Joules.
+# Calibration Guide
 
-This module provides:
-- Basic physics utilities (kinetic and potential energy)
-- Audio signal analysis proxies (relative energy measures)
-- Spectral decomposition for frequency-band energy comparison
+## Why calibration matters
 
-IMPORTANT: Unless calibrated sound-pressure data are supplied, audio-derived
-results in this module are dimensionless signal-energy proxies rather than
-physical acoustic quantities in SI units (J/m³).
-"""
+A WAV file stores digital sample amplitudes, not direct physical sound pressure. For a physically meaningful result, the system must know how those samples relate to pressure in Pascals.
 
-from typing import Any
+Without calibration, the package can still compute useful relative signal-energy proxies, but it cannot truthfully report physical acoustic energy density in J/m³.
 
-import librosa
+## Required information
+
+To convert digital audio into physical pressure you need:
+- microphone sensitivity (for example, mV/Pa or V/Pa)
+- gain or recording-chain amplification information
+- ADC or interface full-scale range and conversion settings
+- explicit assumptions about the sound field, such as plane-wave conditions
+
+## Common path to calibrated pressure
+
+1. Load the WAV file into a NumPy array.
+2. Convert digital amplitude to voltage using the ADC reference and full-scale range.
+3. Convert voltage to pressure using the microphone sensitivity.
+4. Apply the appropriate acoustic model if needed.
+
+Example:
+
+```python
 import numpy as np
+from scipy.io import wavfile
 
+sample_rate, data = wavfile.read("recording.wav")
+# Assume 16-bit PCM normalized to [-1, 1]
+normalized = data.astype(np.float64) / 32768.0
 
-def calculate_kinetic_energy(mass: float, velocity: float) -> float:
-    """
-    Calculate translational kinetic energy in joules.
+# Example values for illustration only
+adc_full_scale_vpp = 2.0
+mic_sensitivity_v_per_pa = 0.05
 
-    Formula: KE = 0.5 * m * v²
+volts = normalized * (adc_full_scale_vpp / 2.0)
+pressure_pa = volts / mic_sensitivity_v_per_pa
+```
 
-    Args:
-        mass: Mass in kilograms (kg)
-        velocity: Velocity in meters per second (m/s)
+This is a calibration workflow, not a one-click conversion. The exact values depend on hardware and recording chain configuration.
 
-    Returns:
-        Kinetic energy in Joules (J)
+## Scientific caveat
 
-    Raises:
-        ValueError: If mass is negative
-    """
-    if mass < 0:
-        raise ValueError("Mass cannot be negative")
+For a plane progressive wave, pressure and particle velocity are related by:
 
-    return 0.5 * mass * velocity**2
+$$ v = \frac{p}{\rho c} $$
 
+and the total acoustic energy density becomes:
 
-def calculate_potential_energy(
-    mass: float,
-    height: float,
-    gravity: float = 9.81,
-) -> float:
-    """
-    Calculate gravitational potential energy in joules.
+$$ w = \frac{p^2}{\rho c^2} $$
 
-    Formula: PE = m * g * h
+This holds only under the stated acoustic assumptions and with calibrated pressure data.
 
-    Args:
-        mass: Mass in kilograms (kg)
-        height: Height above reference point in meters (m)
-        gravity: Gravitational acceleration in m/s² (default: 9.81 for Earth)
+## Current package stance
 
-    Returns:
-        Potential energy in Joules (J)
-
-    Raises:
-        ValueError: If mass is negative
-    """
-    if mass < 0:
-        raise ValueError("Mass cannot be negative")
-
-    return mass * gravity * height
-
-
-def instantaneous_intensity_proxy(y: np.ndarray) -> np.ndarray:
-    """
-    Return squared waveform amplitudes as an intensity proxy.
-
-    In acoustics, intensity is proportional to the square of sound pressure.
-    For uncalibrated digital audio, this is a relative proxy only—not an
-    absolute physical intensity in W/m².
-
-    Args:
-        y: Audio waveform as numpy array (mono, 1D)
-
-    Returns:
-        Array of squared amplitudes (dimensionless intensity proxy)
-
-    Raises:
-        TypeError: If waveform is not a numpy array
-        ValueError: If waveform is empty
-    """
-    waveform = _validate_mono_waveform(y)
-    return np.square(waveform, dtype=np.float64)
-
-
-def frame_mean_square(
-    y: np.ndarray,
-    frame_length: int,
-    hop_length: int,
-) -> np.ndarray:
-    """
-    Compute mean-square amplitude for overlapping signal frames.
-
-    The result is a relative signal-energy proxy for uncalibrated audio.
-    Values represent frame-wise power density proportional to amplitude,
-    not physical energy density in joules per cubic meter.
-
-    Args:
-        y: Audio waveform as numpy array (mono, 1D)
-        frame_length: Length of each frame in samples
-        hop_length: Number of samples between frame starts
-
-    Returns:
-        Array of mean-square values per frame (dimensionless proxy)
-
-    Raises:
-        TypeError: If waveform is not a numpy array
-        ValueError: If parameters are invalid
-    """
-    waveform = _validate_mono_waveform(y)
-
-    if frame_length <= 0 or hop_length <= 0:
-        raise ValueError("frame_length and hop_length must be positive")
-    if waveform.size < frame_length:
-        raise ValueError(
-            f"Signal is too short ({waveform.size} samples) "
-            f"for frame_length ({frame_length})"
-        )
-
-    frames = librosa.util.frame(
-        waveform,
-        frame_length=frame_length,
-        hop_length=hop_length,
-    )
-    return np.mean(np.square(frames, dtype=np.float64), axis=0)
-
-
-def spectral_band_energy_proxy(
-    y: np.ndarray,
-    sr: int,
-    cutoff_hz: float = 1000.0,
-) -> dict[str, float]:
-    """
-    Split the relative spectral energy of a mono signal into two frequency bands.
-
-    This function computes energy in low and high frequency regions separated
-    by a cutoff frequency. Absolute proxy values depend on signal length and
-    amplitude. Ratio fields are generally more suitable for comparing similarly
-    processed recordings.
-
-    Args:
-        y: Audio waveform as numpy array (mono, 1D)
-        sr: Sample rate in Hz
-        cutoff_hz: Frequency (Hz) separating low and high bands (default: 1000 Hz)
-
-    Returns:
-        Dictionary with keys:
-        - 'cutoff_hz': Cutoff frequency used
-        - 'low_band_energy_proxy': Relative energy in low band
-        - 'high_band_energy_proxy': Relative energy in high band
-        - 'total_energy_proxy': Sum of both bands
-        - 'low_band_ratio': Fraction of energy in low band (0–1)
-        - 'high_band_ratio': Fraction of energy in high band (0–1)
-
-    Raises:
-        TypeError: If waveform is not a numpy array
-        ValueError: If parameters are invalid
-    """
-    waveform = _validate_mono_waveform(y)
-
-    if sr <= 0:
-        raise ValueError(f"Sample rate must be positive, got {sr}")
-    if not 0 < cutoff_hz < sr / 2:
-        raise ValueError(
-            f"cutoff_hz must be between 0 and the Nyquist frequency ({sr / 2} Hz)"
-        )
-
-    spectrum = np.fft.rfft(waveform)
-    frequencies = np.fft.rfftfreq(waveform.size, d=1 / sr)
-    magnitude_squared = np.abs(spectrum) ** 2
-
-    low_energy = float(np.sum(magnitude_squared[frequencies < cutoff_hz]))
-    high_energy = float(np.sum(magnitude_squared[frequencies >= cutoff_hz]))
-    total_energy = low_energy + high_energy
-
-    low_ratio = low_energy / total_energy if total_energy else 0.0
-    high_ratio = high_energy / total_energy if total_energy else 0.0
-
-    return {
-        "cutoff_hz": float(cutoff_hz),
-        "low_band_energy_proxy": low_energy,
-        "high_band_energy_proxy": high_energy,
-        "total_energy_proxy": total_energy,
-        "low_band_ratio": low_ratio,
-        "high_band_ratio": high_ratio,
-    }
-
-
-def _validate_mono_waveform(y: np.ndarray) -> np.ndarray:
-    """
-    Validate and return a one-dimensional floating-point waveform.
-
-    Private helper for internal use.
-
-    Args:
-        y: Input to validate
-
-    Returns:
-        Validated numpy array as float64
-
-    Raises:
-        TypeError: If not a numpy array
-        ValueError: If not 1D or is empty
-    """
-    if not isinstance(y, np.ndarray):
-        raise TypeError("Waveform must be a NumPy array")
-    if y.ndim != 1:
-        raise ValueError("This function expects a one-dimensional mono waveform")
-    if y.size == 0:
-        raise ValueError("Waveform cannot be empty")
-
-    return y.astype(np.float64, copy=False)
-
-
-__all__ = [
-    "calculate_kinetic_energy",
-    "calculate_potential_energy",
-    "frame_mean_square",
-    "instantaneous_intensity_proxy",
-    "spectral_band_energy_proxy",
-]
+The package currently reports relative or normalized energy metrics for uncalibrated digital audio. Those values are useful as signal proxies but should not be described as physical acoustic energy density without calibration.
