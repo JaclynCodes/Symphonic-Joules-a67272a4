@@ -1,174 +1,58 @@
-# Frequently Asked Questions (FAQ)
+# Calibration Guide
 
-## 🎵 General Questions
+## Why calibration matters
 
-### What is Symphonic-Joules?
+A WAV file stores digital sample amplitudes, not direct physical sound pressure. For a physically meaningful result, the system must know how those samples relate to pressure in Pascals.
 
-Symphonic-Joules is an open-source project that bridges the worlds of audio processing and energy calculations. It provides tools and frameworks for analyzing the relationship between sound and energy through computational methods.
+Without calibration, the package can still compute useful relative signal-energy proxies, but it cannot truthfully report physical acoustic energy density in J/m³.
 
-### Who is this project for?
+## Required information
 
-- **Musicians and Audio Engineers**: Analyze energy content in musical compositions
-- **Physicists and Researchers**: Study acoustic energy and wave propagation
-- **Data Scientists**: Explore audio data through energy-based perspectives
-- **Educators**: Teach concepts at the intersection of sound and physics
-- **Developers**: Build applications that combine audio and energy analysis
+To convert digital audio into physical pressure you need:
+- microphone sensitivity (for example, mV/Pa or V/Pa)
+- gain or recording-chain amplification information
+- ADC or interface full-scale range and conversion settings
+- explicit assumptions about the sound field, such as plane-wave conditions
 
-### What makes Symphonic-Joules unique?
+## Common path to calibrated pressure
 
-The project specifically focuses on the intersection of audio processing and energy calculations, providing a unified framework for exploring how sound and energy relate to each other in computational contexts.
+1. Load the WAV file into a NumPy array.
+2. Convert digital amplitude to voltage using the ADC reference and full-scale range.
+3. Convert voltage to pressure using the microphone sensitivity.
+4. Apply the appropriate acoustic model if needed.
 
-## 🚀 Getting Started
+Example:
 
-### How do I install Symphonic-Joules?
+```python
+import numpy as np
+from scipy.io import wavfile
 
-Currently, the project is in early development. Installation instructions will be provided as the codebase evolves. Check the [Getting Started Guide](getting-started.md) for the latest information.
+sample_rate, data = wavfile.read("recording.wav")
+# Assume 16-bit PCM normalized to [-1, 1]
+normalized = data.astype(np.float64) / 32768.0
 
-### What programming languages are supported?
+# Example values for illustration only
+adc_full_scale_vpp = 2.0
+mic_sensitivity_v_per_pa = 0.05
 
-The specific programming language and technology stack will be determined during the development process. Check the project repository for current implementation details.
+volts = normalized * (adc_full_scale_vpp / 2.0)
+pressure_pa = volts / mic_sensitivity_v_per_pa
+```
 
-### Are there any prerequisites?
+This is a calibration workflow, not a one-click conversion. The exact values depend on hardware and recording chain configuration.
 
-Prerequisites will be documented as they are established. The project aims to minimize external dependencies while providing powerful functionality.
+## Scientific caveat
 
-### What Python version do I need?
+For a plane progressive wave, pressure and particle velocity are related by:
 
-The project is designed to work with Python 3.8 or higher. However, if you're on macOS and experience compatibility issues with newer Python versions (3.12+), you may need to use Python 3.11 as a temporary workaround. See the [Installation Guide](installation-setup.md#macos-python-version-compatibility) for detailed instructions.
+$$ v = \frac{p}{\rho c} $$
 
-## 🔬 Scientific Questions
+and the total acoustic energy density becomes:
 
-### What scientific principles does the project use?
+$$ w = \frac{p^2}{\rho c^2} $$
 
-Symphonic-Joules is built on established principles from:
-- **Acoustics**: Wave theory, frequency analysis, sound propagation
-- **Thermodynamics**: Energy conservation, energy transformations
-- **Signal Processing**: Digital signal processing, Fourier analysis
-- **Physics**: Wave-particle duality, energy quantization
+This holds only under the stated acoustic assumptions and with calibrated pressure data.
 
-### How accurate are the energy calculations?
+## Current package stance
 
-The project aims for scientific accuracy by:
-- Using validated algorithms from established literature
-- Implementing appropriate numerical precision
-- Providing uncertainty estimates where applicable
-- Supporting peer review of calculations
-
-### Can I use this for research publications?
-
-Yes! The project is designed to support scientific research. We recommend:
-- Citing the project appropriately
-- Validating results against known benchmarks
-- Contributing improvements back to the community
-- Following scientific best practices
-
-## 🛠️ Technical Questions
-
-### What audio formats are supported?
-
-The project aims to support common audio formats including:
-- WAV (uncompressed)
-- MP3 (compressed)
-- FLAC (lossless compression)
-- OGG Vorbis
-
-Specific format support will be documented as features are implemented.
-
-### Can I process real-time audio?
-
-Real-time audio processing is a planned feature. The architecture is designed to support both batch processing and real-time analysis.
-
-### How do I extend the functionality?
-
-Symphonic-Joules is designed with extensibility in mind:
-- Plugin architecture for custom algorithms
-- Modular design for easy component replacement
-- Clear APIs for integration with other tools
-- Community contributions are welcome
-
-## 🤝 Contributing
-
-### How can I contribute?
-
-There are many ways to contribute:
-- **Code**: Implement new features or fix bugs
-- **Documentation**: Improve guides and examples
-- **Testing**: Help test features and report issues
-- **Research**: Contribute scientific validation and references
-- **Community**: Help answer questions and support other users
-
-See our [Contributing Guidelines](../CONTRIBUTING.md) for detailed information.
-
-### I found a bug. How do I report it?
-
-1. Check if the issue already exists in [GitHub Issues](https://github.com/JaclynCodes/Symphonic-Joules/issues)
-2. If not, create a new issue with:
-   - Clear description of the problem
-   - Steps to reproduce
-   - Expected vs. actual behavior
-   - System information (OS, versions, etc.)
-
-### I have a feature request. Where do I submit it?
-
-Feature requests can be submitted through GitHub Issues. Please include:
-- Clear description of the desired feature
-- Use cases and motivation
-- Possible implementation approaches
-- References to relevant scientific literature if applicable
-
-## 📚 Resources
-
-### Where can I learn more about the scientific background?
-
-- Academic literature on acoustics and energy physics
-- Signal processing textbooks and resources
-
-### Are there tutorials available?
-
-Tutorials and example code will be added as the project develops. These will include:
-- Basic usage examples
-- Scientific analysis workflows
-- Advanced techniques and methods
-- Real-world applications
-
-**Note**: Watch the repository for updates as the `examples/` directory is populated during development.
-
-### How do I stay updated on project progress?
-
-- **GitHub Repository**: Watch the repository for updates
-- **Issues and Discussions**: Follow GitHub Issues and Discussions
-- **Releases**: Check the [Releases page](https://github.com/JaclynCodes/Symphonic-Joules/releases)
-- **Changelog**: Review the [CHANGELOG.md](../CHANGELOG.md)
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-As the project develops, common issues and their solutions will be documented here.
-
-### Performance Issues
-
-Performance optimization tips and troubleshooting guides will be added as the project matures.
-
-### Platform-Specific Problems
-
-Platform-specific issues and solutions will be documented as they are encountered and resolved.
-
-## 📞 Getting Help
-
-### Where can I ask questions?
-
-- **GitHub Discussions**: For general questions and community discussion
-- **GitHub Issues**: For bug reports and feature requests
-- **Documentation**: Check existing documentation first
-
-### Response Times
-
-As a community-driven project, response times may vary. For urgent issues, consider:
-- Providing detailed information to help others help you
-- Checking if similar issues have been resolved before
-- Contributing to the solution when possible
-
----
-
-*Have a question not covered here? Feel free to ask in GitHub Discussions!*
+The package currently reports relative or normalized energy metrics for uncalibrated digital audio. Those values are useful as signal proxies but should not be described as physical acoustic energy density without calibration.

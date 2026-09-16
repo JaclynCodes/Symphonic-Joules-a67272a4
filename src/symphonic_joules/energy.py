@@ -1,230 +1,223 @@
 """
-Energy calculations module for Symphonic-Joules.
+Audio processing utilities for Symphonic-Joules.
 
 This module provides tools for:
-- Energy transformations and measurements
-- Power calculations
-- Energy flow analysis
-- Physics-based computations
-- Acoustic energy analysis
+- Audio file loading and saving
+- Audio signal analysis and transformation
+- Frequency domain analysis (FFT, spectrograms)
+- Time-domain processing (framing, normalization, mono conversion)
+
+All multi-channel audio is returned in channel-first shape: (n_channels, n_samples).
+Mono audio has shape (n_samples,).
 """
 
+from pathlib import Path
+from typing import Any, Optional
+
+import librosa
 import numpy as np
-from typing import Dict
+import soundfile as sf
 
 
-def calculate_kinetic_energy(mass: float, velocity: float) -> float:
+def load_audio(
+    path: str | Path,
+    sr: Optional[int] = None,
+    mono: bool = True,
+) -> tuple[np.ndarray, int, dict[str, Any]]:
     """
-    Calculate kinetic energy using the formula: KE = 0.5 * m * v^2
+    Load an audio file into memory.
+
+    Multi-channel audio is returned in channel-first shape:
+    (n_channels, n_samples). Mono audio has shape (n_samples,).
 
     Args:
-        mass: Mass of the object in kilograms (kg)
-        velocity: Velocity of the object in meters per second (m/s)
+        path: Path to the audio file
+        sr: Target sample rate (None to use file's native sample rate)
+        mono: Convert to mono if True (default: True)
 
     Returns:
-        Kinetic energy in Joules (J)
+        Tuple containing:
+        - y: Audio waveform as numpy array
+        - sample_rate: Sample rate in Hz
+        - metadata: Dict with 'duration_seconds', 'n_samples', 'channels', 'sample_rate_hz'
 
     Raises:
-        ValueError: If mass is negative
-    """
-    if mass < 0:
-        raise ValueError("Mass cannot be negative")
-    return 0.5 * mass * velocity ** 2
+        FileNotFoundError: If audio file does not exist
+        RuntimeError: If audio file cannot be loaded
 
-
-def calculate_potential_energy(mass: float, height: float, gravity: float = 9.81) -> float:
-    """
-    Calculate gravitational potential energy using the formula: PE = m * g * h
-
-    Args:
-        mass: Mass of the object in kilograms (kg)
-        height: Height above reference point in meters (m)
-        gravity: Gravitational acceleration in m/s^2 (default: 9.81)
-
-    Returns:
-        Potential energy in Joules (J)
-
-    Raises:
-        ValueError: If mass is negative
-    """
-    if mass < 0:
-        raise ValueError("Mass cannot be negative")
-    return mass * gravity * height
-
-
-def acoustic_intensity_proxy(y: np.ndarray) -> np.ndarray:
-    """
-    Compute a proxy for instantaneous acoustic intensity.
-    
-    In acoustics, intensity is proportional to the square of sound pressure.
-    This function computes the square of the audio signal as a proxy for
-    instantaneous intensity (energy per unit area per unit time).
-    
-    Note: This is a simplified proxy. True acoustic intensity requires
-    calibrated measurements and consideration of the acoustic impedance
-    of the medium.
-    
-    Args:
-        y: Audio waveform as numpy array (sound pressure proxy)
-    
-    Returns:
-        Array of instantaneous intensity proxy values (proportional to pressure squared)
-    
-    Raises:
-        ValueError: If waveform is invalid
-    
-    References:
-        Beranek, L. L., & Mellow, T. (2012). Acoustics: Sound fields and transducers.
-        Academic Press.
-    
     Example:
-        >>> intensity = acoustic_intensity_proxy(waveform)
-        >>> mean_intensity = np.mean(intensity)
+        >>> y, sr, metadata = load_audio('birdsong.wav', sr=22050)
+        >>> print(f"Duration: {metadata['duration_seconds']:.2f}s")
     """
-    if not isinstance(y, np.ndarray):
-        raise ValueError("Waveform must be a numpy array")
-    
-    if y.size == 0:
-        raise ValueError("Cannot compute intensity for empty waveform")
-    
-    # Intensity proxy: I ∝ p^2 (pressure squared)
-    return y ** 2
+    try:
+        y, sample_rate = librosa.load(str(path), sr=sr, mono=mono)
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"Audio file not found: {path}") from exc
+    except Exception as exc:
+        raise RuntimeError(f"Failed to load audio file '{path}': {exc}") from exc
+
+    n_samples = y.shape[-1]
+    channels = 1 if y.ndim == 1 else y.shape[0]
+
+    metadata = {
+        "duration_seconds": n_samples / sample_rate,
+        "n_samples": n_samples,
+        "channels": channels,
+        "sample_rate_hz": sample_rate,
+    }
+
+    return y, sample_rate, metadata
 
 
-def frame_energy_density(y: np.ndarray, frame_length: int, hop_length: int) -> np.ndarray:
+def save_audio(path: str | Path, y: np.ndarray, sr: int) -> None:
     """
-    Compute average energy density per frame.
-    
-    Energy density is calculated as the mean squared amplitude within each frame,
-    representing the average acoustic energy per sample in that frame.
-    
+    Save a mono or channel-first multi-channel waveform to a file.
+
+    For multi-channel input, `y` must use shape (n_channels, n_samples).
+    The function will transpose to (n_samples, n_channels) for soundfile.
+
     Args:
-        y: Audio waveform as numpy array
-        frame_length: Length of each frame in samples
-        hop_length: Number of samples to advance between frames
-    
-    Returns:
-        Array of energy density values, one per frame
-    
-    Raises:
-        ValueError: If parameters are invalid
-    
-    Example:
-        >>> energy = frame_energy_density(waveform, frame_length=2048, hop_length=512)
-        >>> # Find frames with highest energy
-        >>> high_energy_frames = np.where(energy > np.percentile(energy, 90))[0]
-    """
-    if not isinstance(y, np.ndarray):
-        raise ValueError("Waveform must be a numpy array")
-    
-    if y.size == 0:
-        raise ValueError("Cannot compute energy density for empty waveform")
-    
-    if frame_length <= 0:
-        raise ValueError(f"frame_length must be positive, got {frame_length}")
-    
-    if hop_length <= 0:
-        raise ValueError(f"hop_length must be positive, got {hop_length}")
-    
-    # Use librosa for efficient framing and vectorized calculation.
-    import librosa
-
-    if y.size < frame_length:
-        raise ValueError(f"Signal is too short ({y.size} samples) for frame_length ({frame_length})")
-
-    y_frames = librosa.util.frame(y, frame_length=frame_length, hop_length=hop_length)
-    energy_density = np.mean(np.square(y_frames.astype(np.float64, copy=False)), axis=0)
-
-    return energy_density
-
-
-def energy_decomposition_proxy(y: np.ndarray, sr: int, cutoff_freq: float = 1000.0) -> Dict[str, float]:
-    """
-    Decompose signal energy into low and high frequency components.
-    
-    This provides a physics-informed energy decomposition by splitting
-    the signal into frequency bands, loosely analogous to potential
-    (low frequency, slower oscillations) and kinetic (high frequency,
-    faster oscillations) energy concepts.
-    
-    Note: This is a conceptual proxy for educational purposes. True
-    potential and kinetic energy in acoustics involve particle velocity
-    and displacement, requiring additional measurements.
-    
-    Args:
+        path: Output file path
         y: Audio waveform as numpy array
         sr: Sample rate in Hz
-        cutoff_freq: Frequency (Hz) separating low and high bands (default: 1000 Hz)
-    
-    Returns:
-        Dictionary with keys:
-        - 'low_freq_energy': Energy in low frequency band (< cutoff_freq)
-        - 'high_freq_energy': Energy in high frequency band (>= cutoff_freq)
-        - 'total_energy': Total energy across all frequencies
-        - 'low_freq_ratio': Fraction of energy in low frequencies
-        - 'high_freq_ratio': Fraction of energy in high frequencies
-    
+
     Raises:
-        ValueError: If parameters are invalid
-    
-    References:
-        Pierce, A. D. (1989). Acoustics: An introduction to its physical principles
-        and applications. Acoustical Society of America.
-    
+        ValueError: If waveform or sample rate is invalid
+        RuntimeError: If file cannot be saved
+
     Example:
-        >>> decomp = energy_decomposition_proxy(waveform, sr=22050, cutoff_freq=1000)
-        >>> print(f"Low freq energy: {decomp['low_freq_ratio']:.1%}")
-        >>> print(f"High freq energy: {decomp['high_freq_ratio']:.1%}")
+        >>> save_audio('output.wav', waveform, 22050)
     """
-    if not isinstance(y, np.ndarray):
-        raise ValueError("Waveform must be a numpy array")
-    
-    if y.size == 0:
-        raise ValueError("Cannot compute energy decomposition for empty waveform")
-    
     if sr <= 0:
         raise ValueError(f"Sample rate must be positive, got {sr}")
-    
-    if cutoff_freq <= 0 or cutoff_freq >= sr / 2:
-        raise ValueError(f"Cutoff frequency must be between 0 and Nyquist frequency ({sr/2} Hz)")
-    
-    # Compute FFT for frequency domain analysis
-    fft = np.fft.rfft(y)
-    fft_freqs = np.fft.rfftfreq(len(y), 1/sr)
-    
-    # Power spectral density (squared magnitude)
-    power_spectrum = np.abs(fft) ** 2
-    
-    # Split into low and high frequency bands
-    low_freq_mask = fft_freqs < cutoff_freq
-    high_freq_mask = fft_freqs >= cutoff_freq
-    
-    # Calculate energy in each band
-    low_freq_energy = np.sum(power_spectrum[low_freq_mask])
-    high_freq_energy = np.sum(power_spectrum[high_freq_mask])
-    total_energy = low_freq_energy + high_freq_energy
-    
-    # Avoid division by zero
-    if total_energy == 0:
-        low_freq_ratio = 0.0
-        high_freq_ratio = 0.0
-    else:
-        low_freq_ratio = low_freq_energy / total_energy
-        high_freq_ratio = high_freq_energy / total_energy
-    
-    return {
-        'low_freq_energy': float(low_freq_energy),
-        'high_freq_energy': float(high_freq_energy),
-        'total_energy': float(total_energy),
-        'low_freq_ratio': float(low_freq_ratio),
-        'high_freq_ratio': float(high_freq_ratio)
-    }
+    if not isinstance(y, np.ndarray):
+        raise TypeError("Waveform must be a NumPy array")
+    if y.size == 0:
+        raise ValueError("Cannot save an empty waveform")
+    if y.ndim not in (1, 2):
+        raise ValueError("Waveform must be one-dimensional or two-dimensional")
+
+    # Transpose multi-channel audio from (n_channels, n_samples) to (n_samples, n_channels)
+    output = y.T if y.ndim == 2 else y
+
+    try:
+        sf.write(str(path), output, sr)
+    except Exception as exc:
+        raise RuntimeError(f"Failed to save audio file '{path}': {exc}") from exc
+
+
+def normalize_peak(y: np.ndarray) -> np.ndarray:
+    """
+    Return a copy of `y` normalized to peak absolute amplitude of 1.0.
+
+    Args:
+        y: Audio waveform as numpy array
+
+    Returns:
+        Normalized waveform with peak amplitude of 1.0
+
+    Raises:
+        TypeError: If waveform is not a numpy array
+        ValueError: If waveform is empty or all zeros
+
+    Example:
+        >>> normalized = normalize_peak(waveform)
+        >>> assert np.abs(normalized).max() == 1.0
+    """
+    if not isinstance(y, np.ndarray):
+        raise TypeError("Waveform must be a NumPy array")
+    if y.size == 0:
+        raise ValueError("Cannot normalize an empty waveform")
+
+    peak = float(np.max(np.abs(y)))
+    if peak == 0.0:
+        raise ValueError("Cannot normalize an all-zero waveform")
+
+    return y / peak
+
+
+def to_mono(y: np.ndarray) -> np.ndarray:
+    """
+    Average a channel-first waveform to mono.
+
+    Expects multi-channel audio in shape (n_channels, n_samples).
+    If already mono (1D), returns a copy.
+
+    Args:
+        y: Audio waveform as numpy array
+           Shape: (n_samples,) for mono, (n_channels, n_samples) for multi-channel
+
+    Returns:
+        Mono waveform with shape (n_samples,)
+
+    Raises:
+        TypeError: If waveform is not a numpy array
+        ValueError: If waveform is invalid
+
+    Example:
+        >>> stereo = np.array([[1, 2, 3], [4, 5, 6]])  # 2 channels, 3 samples
+        >>> mono = to_mono(stereo)
+        >>> # Result: [2.5, 3.5, 4.5]
+    """
+    if not isinstance(y, np.ndarray):
+        raise TypeError("Waveform must be a NumPy array")
+    if y.size == 0:
+        raise ValueError("Cannot convert an empty waveform to mono")
+    if y.ndim == 1:
+        return y
+    if y.ndim != 2:
+        raise ValueError("Waveform must be one-dimensional or channel-first 2D")
+
+    return np.mean(y, axis=0)
+
+
+def frame_signal(
+    y: np.ndarray,
+    frame_length: int,
+    hop_length: int,
+) -> np.ndarray:
+    """
+    Split a mono waveform into overlapping frames.
+
+    Uses librosa's efficient framing utility. Frames are returned with
+    shape (frame_length, n_frames).
+
+    Args:
+        y: Audio waveform as numpy array (mono, 1D)
+        frame_length: Length of each frame in samples
+        hop_length: Number of samples between frame starts
+
+    Returns:
+        2D array of frames with shape (frame_length, n_frames)
+
+    Raises:
+        TypeError: If waveform is not a numpy array
+        ValueError: If parameters are invalid
+
+    Example:
+        >>> frames = frame_signal(waveform, frame_length=2048, hop_length=512)
+        >>> print(f"Number of frames: {frames.shape[1]}")
+    """
+    if not isinstance(y, np.ndarray):
+        raise TypeError("Waveform must be a NumPy array")
+    if y.ndim != 1:
+        raise ValueError("frame_signal expects a one-dimensional mono waveform")
+    if y.size < frame_length:
+        raise ValueError("Signal is shorter than frame_length")
+    if frame_length <= 0 or hop_length <= 0:
+        raise ValueError("frame_length and hop_length must be positive")
+
+    return librosa.util.frame(
+        y,
+        frame_length=frame_length,
+        hop_length=hop_length,
+    )
 
 
 __all__ = [
-    "calculate_kinetic_energy", 
-    "calculate_potential_energy",
-    "acoustic_intensity_proxy",
-    "frame_energy_density",
-    "energy_decomposition_proxy"
+    "frame_signal",
+    "load_audio",
+    "normalize_peak",
+    "save_audio",
+    "to_mono",
 ]
