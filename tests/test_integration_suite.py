@@ -10,308 +10,265 @@ accurate validation of workflow files. It tests:
 - Error reporting
 """
 
-import pytest
+import ast
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
 
-
-@pytest.fixture(scope='module')
-def repo_root():
-    """
-    Return the repository root directory.
-    
-    Returns:
-        Path: Path to the repository root directory.
-    """
-    return Path(__file__).parent.parent
+import pytest
+import yaml
 
 
-@pytest.fixture(scope='module')
-def tests_dir(repo_root):
-    """
-    Get the repository's tests directory.
-    
-    Parameters:
-        repo_root (Path): Path to the repository root.
-    
-    Returns:
-        Path: Path to the `tests` directory under the repository root.
-    """
-    return repo_root / 'tests'
+def run_pytest(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
+    """Run pytest with a consistent config for integration tests."""
+    return subprocess.run(
+        [sys.executable, "-m", "pytest", *args],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=str(cwd),
+    )
+
+
+@pytest.fixture(scope="module")
+def repo_root() -> Path:
+    """Return the repository root directory."""
+    return Path(__file__).resolve().parent.parent
+
+
+@pytest.fixture(scope="module")
+def tests_dir(repo_root: Path) -> Path:
+    """Return the repository's tests directory."""
+    return repo_root / "tests"
+
+
+@pytest.fixture(scope="module")
+def workflows_dir(repo_root: Path) -> Path:
+    """Return the workflow test directory."""
+    return repo_root / "tests" / "workflows"
 
 
 class TestTestExecution:
-    """Test that the test suite can execute successfully"""
-    
-    def test_pytest_collection_works(self, tests_dir):
-        """
-        Run pytest in collection-only mode against the tests/workflows directory and assert that test collection succeeds.
-        
-        On failure, the assertion includes pytest stderr to aid diagnosis. Success is defined as pytest exit code 0 or 5 (no tests collected).
-        """
-        result = subprocess.run(
-            [sys.executable, '-m', 'pytest', str(tests_dir / 'workflows'), 
-             '--collect-only', '-q'],
-            capture_output=True,
-            text=True,
-            cwd=str(tests_dir.parent)
+    """Test that the test suite can execute successfully."""
+
+    def test_pytest_collection_works(self, workflows_dir: Path, repo_root: Path):
+        """Verify pytest collection succeeds without failing the suite."""
+        result = run_pytest(str(workflows_dir), "--collect-only", "-q", cwd=repo_root)
+
+        assert result.returncode in (0, 5), (
+            f"Test collection failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
         )
-        
-        # Collection should succeed (exit code 0 or 5 for no tests collected)
-        assert result.returncode in [0, 5], \
-            f"Test collection failed:\n{result.stderr}"
-    
-    def test_workflow_tests_are_discoverable(self, tests_dir):
-        """
-        Verify pytest can discover tests under the workflows test directory.
-        
-        Asserts that pytest's collection output for the tests/workflows directory indicates tests were found; on failure the assertion message includes pytest's stdout.
-        """
-        result = subprocess.run(
-            [sys.executable, '-m', 'pytest', str(tests_dir / 'workflows'),
-             '--collect-only', '-q'],
-            capture_output=True,
-            text=True,
-            cwd=str(tests_dir.parent)
-        )
-        
-        # Should find tests
-        assert 'test session starts' in result.stdout or \
-               'tests collected' in result.stdout or \
-               'test_' in result.stdout, \
+
+    def test_workflow_tests_are_discoverable(self, workflows_dir: Path, repo_root: Path):
+        """Verify pytest can discover workflow tests under tests/workflows."""
+        result = run_pytest(str(workflows_dir), "--collect-only", "-q", cwd=repo_root)
+
+        stdout = result.stdout.lower()
+        assert any(marker in stdout for marker in ("test session starts", "tests collected", "test_")), (
             f"No tests discovered:\n{result.stdout}"
-    
-    def test_blank_workflow_tests_execute(self, repo_root):
-        """Test that blank workflow tests can execute"""
-        test_file = repo_root / 'tests' / 'workflows' / 'test_blank_workflow.py'
-        result = subprocess.run(
-            [sys.executable, '-m', 'pytest', str(test_file), '-v', '--tb=short'],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root)
         )
-        
-        # Tests should pass or at least execute without import errors
-        assert 'ERRORS' not in result.stdout or result.returncode != 2, \
-            f"Test execution had errors:\n{result.stdout}\n{result.stderr}"
+
+    def test_blank_workflow_tests_execute(self, repo_root: Path):
+        """Test that blank workflow tests execute without import errors."""
+        test_file = repo_root / "tests" / "workflows" / "test_blank_workflow.py"
+        result = run_pytest(str(test_file), "-v", "--tb=short", cwd=repo_root)
+
+        assert "ERRORS" not in result.stdout or result.returncode != 2, (
+            f"Test execution had errors:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
 
 
 class TestFixtureInitialization:
-    """Test that fixtures initialize correctly"""
-    
-    def test_workflow_path_fixture_resolves(self, repo_root):
-        """
-        Verify that the `workflow_path` fixture resolves to an existing workflow file.
-        
-        Asserts that the repository's `.github/workflows/blank.yml` file exists when the
-        fixture from `test_blank_workflow` is imported and exercised.
-        """
-        # Import the test module to verify fixtures work
-        import sys
-        sys.path.insert(0, str(repo_root / 'tests' / 'workflows'))
-        
+    """Test that fixtures initialize correctly."""
+
+    def test_workflow_path_fixture_resolves(self, repo_root: Path):
+        """Verify that the workflow fixture resolves to a real workflow file."""
+        import importlib.util
+
+        module_path = repo_root / "tests" / "workflows" / "test_blank_workflow.py"
+        sys.path.insert(0, str(repo_root / "tests" / "workflows"))
+
         try:
-            from test_blank_workflow import workflow_path as blank_workflow_path
-            
-            # Call the fixture (it's a function)
-            # Note: Fixtures need pytest context, so we test the logic directly
-            expected_path = repo_root / '.github' / 'workflows' / 'blank.yml'
-            assert expected_path.exists(), \
-                f"Workflow file should exist at {expected_path}"
+            spec = importlib.util.spec_from_file_location("test_blank_workflow", module_path)
+            assert spec is not None and spec.loader is not None
+
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            assert hasattr(module, "workflow_path"), "workflow_path fixture should be defined"
+
+            expected_path = repo_root / ".github" / "workflows" / "blank.yml"
+            assert expected_path.exists(), f"Workflow file should exist at {expected_path}"
         finally:
             sys.path.pop(0)
-    
-    def test_yaml_parsing_works(self, repo_root):
-        """Test that YAML parsing in fixtures works correctly"""
-        import yaml
-        
-        workflow_file = repo_root / '.github' / 'workflows' / 'blank.yml'
-        with open(workflow_file, 'r') as f:
-            content = yaml.safe_load(f)
-        
+
+    def test_yaml_parsing_works(self, repo_root: Path):
+        """Test that YAML parsing in fixtures works correctly."""
+        workflow_file = repo_root / ".github" / "workflows" / "blank.yml"
+
+        with workflow_file.open("r", encoding="utf-8") as handle:
+            content = yaml.safe_load(handle)
+
         assert content is not None, "YAML parsing should succeed"
         assert isinstance(content, dict), "Parsed YAML should be a dictionary"
-        assert 'name' in content, "Workflow should have name field"
+        assert "name" in content, "Workflow should have name field"
 
 
 class TestTestIsolation:
-    """Test that tests are properly isolated"""
-    
-    def test_module_fixtures_are_cached(self, tests_dir):
-        """Test that module-scoped fixtures are used for performance"""
-        test_file = tests_dir / 'workflows' / 'test_blank_workflow.py'
-        
-        with open(test_file, 'r') as f:
-            content = f.read()
-            
-            # Check that expensive operations use module scope
-            assert "scope='module'" in content, \
-                "Test file should use module-scoped fixtures for performance"
-    
-    def test_tests_dont_modify_workflow_files(self, repo_root):
-        """
-        Verify workflow YAML files under .github/workflows are not modified by the test suite.
-        
-        Checks that each `.yml` file's modification time remains the same after running the workflow tests; fails with a message naming any file that changed.
-        """
-        workflows_dir = repo_root / '.github' / 'workflows'
-        
-        # Get initial state
-        initial_mtimes = {f: f.stat().st_mtime for f in workflows_dir.glob('*.yml')}
-        
-        # Run tests (in dry-run to avoid actual execution issues)
-        result = subprocess.run(
-        subprocess.run(
-            [sys.executable, '-m', 'pytest', 
-             str(repo_root / 'tests' / 'workflows'),
-             '--collect-only'],
-            capture_output=True,
-            cwd=str(repo_root)
+    """Test that tests are properly isolated."""
+
+    def test_module_fixtures_are_cached(self, tests_dir: Path):
+        """Test that module-scoped fixtures are used for performance."""
+        test_file = tests_dir / "workflows" / "test_blank_workflow.py"
+
+        content = test_file.read_text(encoding="utf-8")
+        assert "scope='module'" in content or 'scope="module"' in content, (
+            "Test file should use module-scoped fixtures for performance"
         )
-        
-        # Check that files weren't modified
-        for workflow_file, initial_mtime in initial_mtimes.items():
-            current_mtime = workflow_file.stat().st_mtime
-            assert current_mtime == initial_mtime, \
+
+    def test_tests_dont_modify_workflow_files(self, repo_root: Path):
+        """Verify workflow YAML files under .github/workflows are not modified by tests."""
+        workflows_dir = repo_root / ".github" / "workflows"
+        workflow_files = sorted(workflows_dir.glob("*.yml"))
+
+        initial_hashes = {
+            path: hashlib.sha256(path.read_bytes()).digest() for path in workflow_files
+        }
+
+        result = run_pytest(
+            str(repo_root / "tests" / "workflows"),
+            "--collect-only",
+            "-q",
+            cwd=repo_root,
+        )
+
+        assert result.returncode in (0, 5), (
+            f"Pytest collection failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
+
+        for workflow_file in workflow_files:
+            current_hash = hashlib.sha256(workflow_file.read_bytes()).digest()
+            assert current_hash == initial_hashes[workflow_file], (
                 f"Test execution should not modify {workflow_file.name}"
+            )
 
 
 class TestErrorReporting:
-    """Test that test failures provide clear error messages"""
-    
-    def test_assertion_messages_are_descriptive(self, tests_dir):
-        """Test that assertions include descriptive error messages"""
-        test_files = list((tests_dir / 'workflows').glob('test_*.py'))
-        
+    """Test that test failures provide clear error messages."""
+
+    def test_assertion_messages_are_descriptive(self, tests_dir: Path):
+        """Test that assertions include descriptive error messages."""
+        test_files = sorted((tests_dir / "workflows").glob("test_*.py"))
+
         for test_file in test_files:
-            with open(test_file, 'r') as f:
-                content = f.read()
-                lines = content.split('\n')
-                
-                # Find assert statements and check for messages
-                assert_with_message = 0
-                total_asserts = 0
-                
-                for line in lines:
-                    if 'assert ' in line and not line.strip().startswith('#'):
-                        total_asserts += 1
-                        if ',' in line:  # Has a message
-                            assert_with_message += 1
-                
-                # At least 80% of assertions should have messages
-                if total_asserts > 0:
-                    ratio = assert_with_message / total_asserts
-                    assert ratio >= 0.8, \
-                        f"{test_file.name}: Only {ratio:.0%} of assertions have error messages"
+            content = test_file.read_text(encoding="utf-8")
+            lines = content.splitlines()
+
+            total_asserts = 0
+            assert_with_message = 0
+
+            for line in lines:
+                stripped = line.strip()
+                if "assert " in stripped and not stripped.startswith("#"):
+                    total_asserts += 1
+                    if "," in stripped:
+                        assert_with_message += 1
+
+            if total_asserts > 0:
+                ratio = assert_with_message / total_asserts
+                assert ratio >= 0.8, (
+                    f"{test_file.name}: Only {ratio:.0%} of assertions have error messages"
+                )
 
 
 class TestTestCoverage:
-    """Test that test coverage is comprehensive"""
-    
-    def test_all_workflow_aspects_tested(self, repo_root):
-        """
-        Ensure workflow tests cover a majority of predefined critical aspects.
-        
-        For each test file under tests/workflows matching test_*.py, assert the file references at least five of the seven critical aspects: structure, metadata, trigger, job, step, security, and permission.
-        """
-        test_files = list((repo_root / 'tests' / 'workflows').glob('test_*.py'))
-        
-        critical_aspects = [
-            'structure',  # YAML structure
-            'metadata',   # Workflow metadata
-            'trigger',    # Trigger configuration
-            'job',        # Job definitions
-            'step',       # Step configurations
-            'security',   # Security validation
-            'permission', # Permissions
-        ]
-        
-        for test_file in test_files:
-            with open(test_file, 'r') as f:
-                content = f.read().lower()
-                
-                covered = sum(1 for aspect in critical_aspects 
-                             if aspect in content)
-                
-                # Should cover at least 5 out of 7 aspects
-                assert covered >= 5, \
-                    f"{test_file.name} should test more workflow aspects (got {covered}/7)"
+    """Test that test coverage is comprehensive."""
 
-    def test_blank_workflow_has_markdown_lint_job(self, repo_root):
-        """Test that blank.yml workflow includes the lint-markdown job"""
-        import yaml
-        
-        workflow_file = repo_root / '.github' / 'workflows' / 'blank.yml'
-        with open(workflow_file, 'r') as f:
-            content = yaml.safe_load(f)
-        
-        assert 'jobs' in content, "Workflow should have jobs section"
-        assert 'lint-markdown' in content['jobs'], \
+    def test_all_workflow_aspects_tested(self, repo_root: Path):
+        """Ensure workflow tests cover critical workflow aspects."""
+        test_files = sorted((repo_root / "tests" / "workflows").glob("test_*.py"))
+
+        critical_aspects = [
+            "structure",
+            "metadata",
+            "trigger",
+            "job",
+            "step",
+            "security",
+            "permission",
+        ]
+
+        for test_file in test_files:
+            content = test_file.read_text(encoding="utf-8").lower()
+            covered = sum(1 for aspect in critical_aspects if aspect in content)
+
+            assert covered >= 5, (
+                f"{test_file.name} should test more workflow aspects (got {covered}/7)"
+            )
+
+    def test_blank_workflow_has_markdown_lint_job(self, repo_root: Path):
+        """Test that blank.yml workflow includes the lint-markdown job."""
+        workflow_file = repo_root / ".github" / "workflows" / "blank.yml"
+
+        with workflow_file.open("r", encoding="utf-8") as handle:
+            content = yaml.safe_load(handle)
+
+        assert "jobs" in content, "Workflow should have jobs section"
+        assert "lint-markdown" in content["jobs"], (
             "Workflow should have 'lint-markdown' job for markdown linting"
-        
-        # Verify the lint-markdown job has required configuration
-        lint_job = content['jobs']['lint-markdown']
-        assert 'steps' in lint_job, "lint-markdown job should have steps"
-        
-        # Check for markdownlint action
-        steps = lint_job['steps']
-        has_markdownlint = any(
-            'markdownlint-cli2-action' in step.get('uses', '')
-            for step in steps if isinstance(step, dict)
         )
-        assert has_markdownlint, \
+
+        lint_job = content["jobs"]["lint-markdown"]
+        assert "steps" in lint_job, "lint-markdown job should have steps"
+
+        steps = lint_job["steps"]
+        has_markdownlint = any(
+            "markdownlint-cli2-action" in step.get("uses", "")
+            for step in steps
+            if isinstance(step, dict)
+        )
+        assert has_markdownlint, (
             "lint-markdown job should use markdownlint-cli2-action"
+        )
 
 
 class TestDocumentation:
-    """Test that tests are well-documented"""
-    
-    def test_all_test_classes_documented(self, tests_dir):
-        """Test that all test classes have docstrings"""
-        import ast
-        
-        test_files = list((tests_dir / 'workflows').glob('test_*.py'))
-        
+    """Test that tests are well-documented."""
+
+    def test_all_test_classes_documented(self, tests_dir: Path):
+        """Verify all test classes have docstrings."""
+        test_files = sorted((tests_dir / "workflows").glob("test_*.py"))
+
         for test_file in test_files:
-            with open(test_file, 'r') as f:
-                content = f.read()
-                tree = ast.parse(content)
-                
-                test_classes = [node for node in ast.walk(tree)
-                               if isinstance(node, ast.ClassDef)
-                               and node.name.startswith('Test')]
-                
-                for cls in test_classes:
-                    docstring = ast.get_docstring(cls)
-                    assert docstring is not None, \
-                        f"Class {cls.name} in {test_file.name} should have docstring"
-    
-    def test_all_test_methods_documented(self, tests_dir):
-        """
-        Verify that every method whose name starts with `test_` inside classes named `Test*` under `tests/workflows` has a non-empty docstring.
-        
-        Raises:
-            AssertionError: if any test method is missing a docstring; the message includes the method name, class name and file.
-        """
-        import ast
-        
-        test_files = list((tests_dir / 'workflows').glob('test_*.py'))
-        
+            tree = ast.parse(test_file.read_text(encoding="utf-8"))
+            test_classes = [
+                node for node in ast.walk(tree)
+                if isinstance(node, ast.ClassDef) and node.name.startswith("Test")
+            ]
+
+            for cls in test_classes:
+                docstring = ast.get_docstring(cls)
+                assert docstring is not None, (
+                    f"Class {cls.name} in {test_file.name} should have docstring"
+                )
+
+    def test_all_test_methods_documented(self, tests_dir: Path):
+        """Verify all workflow test methods have docstrings."""
+        test_files = sorted((tests_dir / "workflows").glob("test_*.py"))
+
         for test_file in test_files:
-            with open(test_file, 'r') as f:
-                content = f.read()
-                tree = ast.parse(content)
-                
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.ClassDef) and node.name.startswith('Test'):
-                        for item in node.body:
-                            if isinstance(item, ast.FunctionDef) and \
-                               item.name.startswith('test_'):
-                                docstring = ast.get_docstring(item)
-                                assert docstring is not None, \
-                                    f"Method {item.name} in {node.name} ({test_file.name}) needs docstring"
+            tree = ast.parse(test_file.read_text(encoding="utf-8"))
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ClassDef) and node.name.startswith("Test"):
+                    for item in node.body:
+                        if isinstance(item, ast.FunctionDef) and item.name.startswith("test_"):
+                            docstring = ast.get_docstring(item)
+                            assert docstring is not None, (
+                                f"Method {item.name} in {node.name} ({test_file.name}) needs docstring"
+                            )
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
